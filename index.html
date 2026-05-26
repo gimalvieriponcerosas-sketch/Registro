@@ -951,6 +951,12 @@ tr:hover td { background: rgba(255,255,255,0.02); }
         </div>
 
         <div class="field">
+          <label>🏷️ Tipo de Archivador</label>
+          <input type="text" id="tipoArchivador" placeholder="Ej: Administrativo, Financiero, Legal..." />
+          <small>Ingrese el tipo manualmente</small>
+        </div>
+
+        <div class="field">
           <label>N° Archivador</label>
           <input type="text" id="archivador" placeholder="Ej: ARC-001" />
         </div>
@@ -1003,7 +1009,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
       <div class="panel-title">📄 Tabla de Registros</div>
 
       <div class="toolbar">
-        <input type="text" id="busqueda" placeholder="Buscar por año, archivador, nota..." oninput="filtrar()" />
+        <input type="text" id="busqueda" placeholder="Buscar por año, tipo, archivador, nota..." oninput="filtrar()" />
         <button class="btn btn-green" onclick="exportarExcel()">⬇️ Exportar Excel</button>
         <button class="btn btn-ghost" onclick="cargar()" style="width:auto;padding:0.6rem 0.9rem;">🔄</button>
       </div>
@@ -1014,6 +1020,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
             <tr>
               <th>#</th>
               <th>Año</th>
+              <th>🏷️ Tipo</th>
               <th>Archivador</th>
               <th>Nota de Pago</th>
               <th>Cant.</th>
@@ -1022,7 +1029,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
             </tr>
           </thead>
           <tbody id="tbody">
-            <tr class="empty-row"><td colspan="7">Cargando...</td></tr>
+            <tr class="empty-row"><td colspan="8">Cargando...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1150,6 +1157,10 @@ tr:hover td { background: rgba(255,255,255,0.02); }
       <input type="number" id="eAnio" min="2000" max="2030" />
     </div>
     <div class="field">
+      <label>🏷️ Tipo de Archivador</label>
+      <input type="text" id="eTipoArchivador" placeholder="Ej: Administrativo, Financiero..." />
+    </div>
+    <div class="field">
       <label>N° Archivador</label>
       <input type="text" id="eArchivador" />
     </div>
@@ -1157,6 +1168,30 @@ tr:hover td { background: rgba(255,255,255,0.02); }
       <label>Nota de Pago</label>
       <input type="text" id="eNota" />
     </div>
+    
+    <!-- SECCIÓN DE IMAGEN EN EDICIÓN -->
+    <div class="field">
+      <label>🖼️ Imagen del Registro</label>
+      <div id="editImageContainer">
+        <div class="image-upload-area" onclick="document.getElementById('editImagenInput').click()">
+          <span>📸</span>
+          <p>Haz clic para cambiar la imagen</p>
+          <small>O deja la actual si no quieres modificarla</small>
+        </div>
+        <input type="file" id="editImagenInput" accept="image/*" style="display: none" onchange="previsualizarImagenEdicion(this)" />
+      </div>
+      
+      <div class="image-preview" id="editImagePreview" style="display: none;">
+        <img id="editPreviewImg" src="" alt="Vista previa" />
+        <button type="button" class="btn-remove-img" onclick="eliminarImagenEdicion()">🗑️ Eliminar imagen</button>
+      </div>
+      
+      <div id="editImageActual" style="display: none; text-align: center; margin-top: 1rem;">
+        <p style="font-size: 0.75rem; color: var(--text3); margin-bottom: 0.5rem;">Imagen actual:</p>
+        <img id="editImagenActualImg" src="" alt="Imagen actual" style="max-width: 100%; max-height: 150px; border-radius: var(--radius); border: 1px solid var(--border);" />
+      </div>
+    </div>
+    
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="cerrarModal()">Cancelar</button>
       <button class="btn btn-primary" onclick="actualizar()">Guardar cambios</button>
@@ -1249,6 +1284,11 @@ let imagenBase64 = null;
 let imagenActualId = null;
 let imagenActualUrl = null;
 
+// Variables para edición de imagen
+let imagenEdicionBase64 = null;
+let registroEditandoImagenActual = null;
+let eliminarImagenEnEdicion = false;
+
 /* ---- TABS ---- */
 function switchTab(name) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
@@ -1277,7 +1317,7 @@ function validar(nota) {
   return b > a;
 }
 
-/* ---- PREVISUALIZAR IMAGEN ---- */
+/* ---- PREVISUALIZAR IMAGEN (FORMULARIO PRINCIPAL) ---- */
 function previsualizarImagen(input) {
   if (input.files && input.files[0]) {
     const reader = new FileReader();
@@ -1297,6 +1337,38 @@ function eliminarImagenPrevisualizacion() {
   document.getElementById('previewImg').src = '';
 }
 
+/* ---- PREVISUALIZAR IMAGEN EDICIÓN (MODAL) ---- */
+function previsualizarImagenEdicion(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      imagenEdicionBase64 = e.target.result;
+      document.getElementById('editPreviewImg').src = imagenEdicionBase64;
+      document.getElementById('editImagePreview').style.display = 'block';
+      document.getElementById('editImageActual').style.display = 'none';
+      eliminarImagenEnEdicion = false;
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function eliminarImagenEdicion() {
+  imagenEdicionBase64 = null;
+  eliminarImagenEnEdicion = true;
+  document.getElementById('editImagenInput').value = '';
+  document.getElementById('editImagePreview').style.display = 'none';
+  document.getElementById('editImageActual').style.display = 'none';
+}
+
+function resetearImagenEdicion() {
+  imagenEdicionBase64 = null;
+  eliminarImagenEnEdicion = false;
+  document.getElementById('editImagenInput').value = '';
+  document.getElementById('editImagePreview').style.display = 'none';
+  document.getElementById('editImageActual').style.display = 'none';
+  document.getElementById('editPreviewImg').src = '';
+}
+
 /* ---- CARGAR ---- */
 async function cargar() {
   const { data, error } = await db
@@ -1313,13 +1385,14 @@ async function cargar() {
 function renderTabla(registros) {
   const tbody = document.getElementById('tbody');
   if (!registros.length) {
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Sin registros aún</td></tr>';
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="8">Sin registros aún</td></tr>';
     return;
   }
   tbody.innerHTML = registros.map((r, i) => `
     <tr>
       <td style="color:var(--text3);font-family:var(--mono)">${i + 1}</td>
       <td><span style="font-family:var(--mono);color:var(--text2)">${r.anio || '—'}</span></td>
+      <td><span class="badge badge-blue">${r.tipo_archivador || '—'}</span></td>
       <td><span class="badge badge-blue">${r.archivador}</span></td>
       <td><span class="badge badge-amber">${r.nota_pago_rango}</span></td>
       <td style="font-family:var(--mono);color:var(--text3)">${r.cantidad_notas}</td>
@@ -1352,6 +1425,7 @@ function filtrar() {
   const q = document.getElementById('busqueda').value.toLowerCase();
   const f = todos.filter(r =>
     (r.anio && r.anio.toString().includes(q)) ||
+    (r.tipo_archivador && r.tipo_archivador.toLowerCase().includes(q)) ||
     r.archivador.toLowerCase().includes(q) ||
     r.nota_pago_rango.includes(q)
   );
@@ -1361,6 +1435,7 @@ function filtrar() {
 /* ---- GUARDAR CON IMAGEN ---- */
 async function guardar() {
   const anio = document.getElementById('anio').value.trim();
+  const tipoArchivador = document.getElementById('tipoArchivador').value.trim();
   const archivador = document.getElementById('archivador').value.trim();
   const nota = document.getElementById('notaPago').value.trim();
 
@@ -1373,6 +1448,7 @@ async function guardar() {
   const [ini, fin] = nota.split('-').map(Number);
   const payload = {
     archivador,
+    tipo_archivador: tipoArchivador || null,
     nota_pago_inicio: ini,
     nota_pago_fin: fin,
     nota_pago_rango: nota,
@@ -1390,7 +1466,7 @@ async function guardar() {
 
 /* ---- RESET FORM ---- */
 function resetForm() {
-  ['anio','archivador','notaPago'].forEach(id => document.getElementById(id).value = '');
+  ['anio','tipoArchivador','archivador','notaPago'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('formTitle').textContent = '➕ Nuevo Registro';
   editId = null;
   eliminarImagenPrevisualizacion();
@@ -1402,18 +1478,34 @@ function abrirEditar(id) {
   if (!r) return;
   editId = id;
   document.getElementById('eAnio').value = r.anio || '';
+  document.getElementById('eTipoArchivador').value = r.tipo_archivador || '';
   document.getElementById('eArchivador').value = r.archivador;
   document.getElementById('eNota').value = r.nota_pago_rango;
+  
+  // Manejo de imagen en edición
+  registroEditandoImagenActual = r.imagen_url || null;
+  resetearImagenEdicion();
+  
+  if (r.imagen_url) {
+    document.getElementById('editImagenActualImg').src = r.imagen_url;
+    document.getElementById('editImageActual').style.display = 'block';
+  } else {
+    document.getElementById('editImageActual').style.display = 'none';
+  }
+  
   document.getElementById('modalBg').classList.add('open');
 }
 
 function cerrarModal() {
   document.getElementById('modalBg').classList.remove('open');
   editId = null;
+  resetearImagenEdicion();
+  registroEditandoImagenActual = null;
 }
 
 async function actualizar() {
   const anio = document.getElementById('eAnio').value.trim();
+  const tipoArchivador = document.getElementById('eTipoArchivador').value.trim();
   const archivador = document.getElementById('eArchivador').value.trim();
   const nota = document.getElementById('eNota').value.trim();
 
@@ -1423,12 +1515,21 @@ async function actualizar() {
   const [ini, fin] = nota.split('-').map(Number);
   const payload = {
     archivador,
+    tipo_archivador: tipoArchivador || null,
     nota_pago_inicio: ini,
     nota_pago_fin: fin,
     nota_pago_rango: nota,
     cantidad_notas: fin - ini + 1,
     anio: (anio && anio >= 2000) ? parseInt(anio) : null
   };
+
+  // Manejo de imagen en actualización
+  if (eliminarImagenEnEdicion) {
+    payload.imagen_url = null;
+  } else if (imagenEdicionBase64) {
+    payload.imagen_url = imagenEdicionBase64;
+  }
+  // Si no hay nueva imagen y no se marcó para eliminar, se mantiene la actual
 
   const { error } = await db.from('registro_folios_v3').update(payload).eq('id', editId);
   if (error) { toast('Error: ' + error.message, 'err'); }
@@ -1472,6 +1573,7 @@ function exportarExcel() {
   const q = document.getElementById('busqueda').value.toLowerCase();
   const datos = q ? todos.filter(r =>
     (r.anio && r.anio.toString().includes(q)) ||
+    (r.tipo_archivador && r.tipo_archivador.toLowerCase().includes(q)) ||
     r.archivador.toLowerCase().includes(q) ||
     r.nota_pago_rango.includes(q)
   ) : todos;
@@ -1480,6 +1582,7 @@ function exportarExcel() {
 
   const filas = datos.map(r => ({
     'Año': r.anio || '',
+    'Tipo Archivador': r.tipo_archivador || '',
     'Archivador': r.archivador,
     'Nota de Pago': r.nota_pago_rango,
     'Nota Inicio': r.nota_pago_inicio,
@@ -1490,7 +1593,7 @@ function exportarExcel() {
 
   const ws = XLSX.utils.json_to_sheet(filas);
   ws['!cols'] = [
-    { wch: 10 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 18 }, { wch: 12 }
+    { wch: 10 }, { wch: 25 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 18 }, { wch: 12 }
   ];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Folios');
@@ -1502,7 +1605,7 @@ function exportarExcel() {
 async function cargarGaleria() {
   const { data, error } = await db
     .from('registro_folios_v3')
-    .select('id, archivador, anio, nota_pago_rango, imagen_url')
+    .select('id, archivador, tipo_archivador, anio, nota_pago_rango, imagen_url')
     .not('imagen_url', 'is', null)
     .order('created_at', { ascending: false });
   if (error) { toast('Error al cargar galería', 'err'); return; }
@@ -1520,7 +1623,7 @@ function renderGaleria(items) {
       <img src="${item.imagen_url}" style="width: 100%; height: 150px; object-fit: cover; border-radius: var(--radius); cursor: pointer;" onclick="verImagenGrande('${item.imagen_url}', ${item.id})" />
       <div style="margin-top: 0.5rem;">
         <div style="font-weight: 600;">${item.archivador}</div>
-        <div style="font-size: 0.7rem; color: var(--text3);">${item.nota_pago_rango} | ${item.anio || 'Sin año'}</div>
+        <div style="font-size: 0.7rem; color: var(--text3);">${item.tipo_archivador || 'Sin tipo'} | ${item.nota_pago_rango} | ${item.anio || 'Sin año'}</div>
         <button class="btn btn-ghost" onclick="verHistorialItem(${item.id})" style="width: auto; margin-top: 0.5rem; padding: 0.3rem 0.8rem;">Ver detalles</button>
       </div>
     </div>
@@ -1534,7 +1637,7 @@ function filtrarGaleria() {
 
 async function cargarGaleriaConFiltro(filtro) {
   let query = db.from('registro_folios_v3')
-    .select('id, archivador, anio, nota_pago_rango, imagen_url')
+    .select('id, archivador, tipo_archivador, anio, nota_pago_rango, imagen_url')
     .not('imagen_url', 'is', null);
   if (filtro) query = query.ilike('archivador', `%${filtro}%`);
   const { data, error } = await query.order('created_at', { ascending: false });
@@ -1564,7 +1667,8 @@ function renderHistorial(items) {
     <div class="historia-item">
       <div class="historia-fecha">📅 ${new Date(item.created_at).toLocaleString()}</div>
       <div class="historia-campos">
-        <div class="campo-cambiado">📁 ${item.archivador}</div>
+        <div class="campo-cambiado"> ${item.archivador}</div>
+        <div class="campo-cambiado">🏷️ ${item.tipo_archivador || 'Sin tipo'}</div>
         <div class="campo-cambiado">📄 ${item.nota_pago_rango}</div>
         <div class="campo-cambiado">📊 ${item.cantidad_notas} notas</div>
         <div class="campo-cambiado">${item.imagen_url ? '🖼️ Con imagen' : '📷 Sin imagen'}</div>
@@ -1580,6 +1684,7 @@ function filtrarHistorial() {
   const q = document.getElementById('historialBusqueda').value.toLowerCase();
   const filtrados = historial.filter(item =>
     item.archivador.toLowerCase().includes(q) ||
+    (item.tipo_archivador && item.tipo_archivador.toLowerCase().includes(q)) ||
     (item.nota_pago_rango && item.nota_pago_rango.includes(q))
   );
   renderHistorial(filtrados);
@@ -1614,6 +1719,7 @@ function verDetalleHistorial(item) {
       <p><strong>📅 Fecha:</strong> ${new Date(item.created_at).toLocaleString()}</p>
       <p><strong>🏷️ ID:</strong> ${item.id}</p>
       <p><strong>📁 Archivador:</strong> ${item.archivador}</p>
+      <p><strong>🏷️ Tipo:</strong> ${item.tipo_archivador || 'No especificado'}</p>
       <p><strong>📄 Rango de notas:</strong> ${item.nota_pago_rango}</p>
       <p><strong>📊 Cantidad de notas:</strong> ${item.cantidad_notas}</p>
       <p><strong>📅 Año:</strong> ${item.anio || 'No especificado'}</p>
@@ -1777,7 +1883,7 @@ function ocultarTyping() {
 async function obtenerContextoDatos() {
   const { data, error } = await db
     .from('registro_folios_v3')
-    .select('id, archivador, nota_pago_rango, cantidad_notas, anio, imagen_url, created_at')
+    .select('id, archivador, tipo_archivador, nota_pago_rango, cantidad_notas, anio, imagen_url, created_at')
     .order('created_at', { ascending: false });
 
   if (error || !data) return 'No se pudo obtener información de la base de datos.';
@@ -1802,7 +1908,7 @@ async function obtenerContextoDatos() {
 
   // Lista de registros (sin imagen_url para no inflar el prompt)
   const listaRegistros = data.map(r =>
-    `  ID:${r.id} | Archivador:${r.archivador} | Rango:${r.nota_pago_rango} | Cant:${r.cantidad_notas} | Año:${r.anio || 'N/A'} | Imagen:${r.imagen_url ? 'Sí' : 'No'} | Fecha:${new Date(r.created_at).toLocaleDateString('es-PE')}`
+    `  ID:${r.id} | Archivador:${r.archivador} | Tipo:${r.tipo_archivador || 'N/A'} | Rango:${r.nota_pago_rango} | Cant:${r.cantidad_notas} | Año:${r.anio || 'N/A'} | Imagen:${r.imagen_url ? 'Sí' : 'No'} | Fecha:${new Date(r.created_at).toLocaleDateString('es-PE')}`
   ).join('\n');
 
   return `
@@ -1954,7 +2060,7 @@ function makeScales() {
 async function cargarGraficos() {
   const { data, error } = await db
     .from('registro_folios_v3')
-    .select('id, archivador, nota_pago_rango, cantidad_notas, anio, imagen_url, created_at')
+    .select('id, archivador, tipo_archivador, nota_pago_rango, cantidad_notas, anio, imagen_url, created_at')
     .order('created_at', { ascending: true });
 
   if (error || !data || !data.length) {
