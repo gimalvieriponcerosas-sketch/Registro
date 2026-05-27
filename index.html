@@ -3,1392 +3,618 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Registro de Folios - Con Chatbot IA</title>
+<title>Registro de Folios - Login</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-:root {
-  --bg: #0e1117;
-  --surface: #161b26;
-  --surface2: #1e2535;
-  --border: rgba(255,255,255,0.07);
-  --border2: rgba(255,255,255,0.13);
-  --accent: #3b82f6;
-  --accent-dim: rgba(59,130,246,0.12);
-  --accent2: #10b981;
-  --accent2-dim: rgba(16,185,129,0.12);
-  --warn: #f59e0b;
-  --danger: #ef4444;
-  --text: #e2e8f0;
-  --text2: #94a3b8;
-  --text3: #475569;
-  --mono: 'DM Mono', monospace;
-  --sans: 'DM Sans', sans-serif;
-  --radius: 10px;
-  --radius-lg: 16px;
-}
-
-body {
-  font-family: var(--sans);
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  padding: 2rem 1.5rem;
-}
-
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 2.5rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.brand-icon {
-  width: 42px;
-  height: 42px;
-  background: var(--accent-dim);
-  border: 1px solid rgba(59,130,246,0.3);
-  border-radius: var(--radius);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-}
-
-.brand h1 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  letter-spacing: -0.3px;
-}
-
-.brand p {
-  font-size: 0.78rem;
-  color: var(--text3);
-}
-
-.status-dot {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.8rem;
-  color: var(--text2);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 0.45rem 1rem;
-  border-radius: 99px;
-}
-
-.dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent2);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-/* TABS */
-.tabs {
-  display: flex;
-  gap: 4px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 4px;
-  margin-bottom: 2rem;
-  width: fit-content;
-  flex-wrap: wrap;
-}
-
-.tab {
-  padding: 0.5rem 1.2rem;
-  border-radius: 7px;
-  border: none;
-  background: transparent;
-  color: var(--text2);
-  font-family: var(--sans);
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.tab.active {
-  background: var(--surface2);
-  color: var(--text);
-  border: 1px solid var(--border2);
-}
-
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
-
-/* LAYOUT */
-.layout {
-  display: grid;
-  grid-template-columns: 380px 1fr;
-  gap: 1.5rem;
-  align-items: start;
-}
-
-@media (max-width: 1000px) {
-  .layout { grid-template-columns: 1fr; }
-}
-
-.panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
-}
-
-.panel-title {
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text3);
-  margin-bottom: 1.2rem;
-}
-
-/* FORM */
+:root { --bg: #0e1117; --surface: #161b26; --surface2: #1e2535; --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.13); --accent: #3b82f6; --accent-dim: rgba(59,130,246,0.12); --accent2: #10b981; --accent2-dim: rgba(16,185,129,0.12); --warn: #f59e0b; --danger: #ef4444; --text: #e2e8f0; --text2: #94a3b8; --text3: #475569; --mono: 'DM Mono', monospace; --sans: 'DM Sans', sans-serif; --radius: 10px; --radius-lg: 16px; }
+body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; padding: 2rem 1.5rem; }
+.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1rem; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-icon { width: 42px; height: 42px; background: var(--accent-dim); border: 1px solid rgba(59,130,246,0.3); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.brand h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.3px; }
+.brand p { font-size: 0.78rem; color: var(--text3); }
+.status-dot { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text2); background: var(--surface); border: 1px solid var(--border); padding: 0.45rem 1rem; border-radius: 99px; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent2); animation: pulse 2s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 4px; margin-bottom: 2rem; width: fit-content; flex-wrap: wrap; }
+.tab { padding: 0.5rem 1.2rem; border-radius: 7px; border: none; background: transparent; color: var(--text2); font-family: var(--sans); font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+.tab.active { background: var(--surface2); color: var(--text); border: 1px solid var(--border2); }
+.tab-panel { display: none; } .tab-panel.active { display: block; }
+.layout { display: grid; grid-template-columns: 380px 1fr; gap: 1.5rem; align-items: start; }
+@media (max-width: 1000px) { .layout { grid-template-columns: 1fr; } }
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; }
+.panel-title { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 1.2rem; }
 .field { margin-bottom: 1rem; }
-
-.field label {
-  display: block;
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: var(--text2);
-  margin-bottom: 0.4rem;
-}
-
-.field input, .field select {
-  width: 100%;
-  background: var(--bg);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  padding: 0.65rem 0.9rem;
-  font-family: var(--sans);
-  font-size: 0.9rem;
-  color: var(--text);
-  outline: none;
-  transition: border 0.2s;
-}
-
-.field input:focus, .field select:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.08);
-}
-
+.field label { display: block; font-size: 0.78rem; font-weight: 500; color: var(--text2); margin-bottom: 0.4rem; }
+.field input, .field select { width: 100%; background: var(--bg); border: 1px solid var(--border2); border-radius: var(--radius); padding: 0.65rem 0.9rem; font-family: var(--sans); font-size: 0.9rem; color: var(--text); outline: none; transition: border 0.2s; }
+.field input:focus, .field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,130,246,0.08); }
 .field input::placeholder { color: var(--text3); }
-
-.field small {
-  font-size: 0.72rem;
-  color: var(--text3);
-  display: block;
-  margin-top: 0.3rem;
-}
-
-/* ÁREA DE IMAGEN */
-.image-upload-area {
-  border: 2px dashed var(--border2);
-  border-radius: var(--radius);
-  padding: 1rem;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 1rem;
-}
-
-.image-upload-area:hover {
-  border-color: var(--accent);
-  background: var(--accent-dim);
-}
-
-.image-preview {
-  margin-top: 1rem;
-  text-align: center;
-}
-
-.image-preview img {
-  max-width: 100%;
-  max-height: 150px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-}
-
-.btn-remove-img {
-  margin-top: 0.5rem;
-  background: var(--danger);
-  color: white;
-  border: none;
-  padding: 0.25rem 0.8rem;
-  border-radius: 99px;
-  font-size: 0.7rem;
-  cursor: pointer;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 0.65rem 1.2rem;
-  border-radius: var(--radius);
-  border: 1px solid transparent;
-  font-family: var(--sans);
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  width: 100%;
-}
-
-.btn-primary {
-  background: var(--accent);
-  color: white;
-  border-color: var(--accent);
-}
-
+.field small { font-size: 0.72rem; color: var(--text3); display: block; margin-top: 0.3rem; }
+.image-upload-area { border: 2px dashed var(--border2); border-radius: var(--radius); padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 1rem; }
+.image-upload-area:hover { border-color: var(--accent); background: var(--accent-dim); }
+.image-preview { margin-top: 1rem; text-align: center; }
+.image-preview img { max-width: 100%; max-height: 150px; border-radius: var(--radius); border: 1px solid var(--border); }
+.btn-remove-img { margin-top: 0.5rem; background: var(--danger); color: white; border: none; padding: 0.25rem 0.8rem; border-radius: 99px; font-size: 0.7rem; cursor: pointer; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0.65rem 1.2rem; border-radius: var(--radius); border: 1px solid transparent; font-family: var(--sans); font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; width: 100%; }
+.btn-primary { background: var(--accent); color: white; border-color: var(--accent); }
 .btn-primary:hover { background: #2563eb; }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.btn-ghost {
-  background: transparent;
-  color: var(--text2);
-  border-color: var(--border2);
-  margin-top: 0.6rem;
-}
-
+.btn-ghost { background: transparent; color: var(--text2); border-color: var(--border2); margin-top: 0.6rem; }
 .btn-ghost:hover { background: var(--surface2); color: var(--text); }
-
-.btn-green {
-  background: var(--accent2-dim);
-  color: var(--accent2);
-  border-color: rgba(16,185,129,0.2);
-}
-
+.btn-green { background: var(--accent2-dim); color: var(--accent2); border-color: rgba(16,185,129,0.2); }
 .btn-green:hover { background: rgba(16,185,129,0.2); }
-
-.btn-warning {
-  background: rgba(245,158,11,0.1);
-  color: var(--warn);
-  border-color: rgba(245,158,11,0.2);
-}
-
+.btn-warning { background: rgba(245,158,11,0.1); color: var(--warn); border-color: rgba(245,158,11,0.2); }
 .btn-warning:hover { background: rgba(245,158,11,0.2); }
-
-/* STATS */
-.stats-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.8rem;
-  margin-top: 1.2rem;
-}
-
-.stat {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1rem;
-  text-align: center;
-}
-
-.stat-num {
-  font-family: var(--mono);
-  font-size: 1.8rem;
-  font-weight: 500;
-  color: var(--accent);
-  display: block;
-  line-height: 1;
-}
-
-.stat-label {
-  font-size: 0.72rem;
-  color: var(--text3);
-  margin-top: 0.3rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* TABLE PANEL */
-.toolbar {
-  display: flex;
-  gap: 0.7rem;
-  margin-bottom: 1.2rem;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.toolbar input {
-  flex: 1;
-  min-width: 180px;
-  background: var(--bg);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  padding: 0.6rem 0.9rem;
-  font-family: var(--sans);
-  font-size: 0.85rem;
-  color: var(--text);
-  outline: none;
-}
-
+.stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 1.2rem; }
+.stat { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; text-align: center; }
+.stat-num { font-family: var(--mono); font-size: 1.8rem; font-weight: 500; color: var(--accent); display: block; line-height: 1; }
+.stat-label { font-size: 0.72rem; color: var(--text3); margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.toolbar { display: flex; gap: 0.7rem; margin-bottom: 1.2rem; flex-wrap: wrap; align-items: center; }
+.toolbar input { flex: 1; min-width: 180px; background: var(--bg); border: 1px solid var(--border2); border-radius: var(--radius); padding: 0.6rem 0.9rem; font-family: var(--sans); font-size: 0.85rem; color: var(--text); outline: none; }
 .toolbar input:focus { border-color: var(--accent); }
 .toolbar input::placeholder { color: var(--text3); }
-
 .toolbar .btn { width: auto; padding: 0.6rem 1rem; font-size: 0.82rem; }
-
-/* TABLE */
-.table-wrap {
-  overflow-x: auto;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  max-height: 500px;
-  overflow-y: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-}
-
-thead {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-}
-
-th {
-  background: var(--surface2);
-  padding: 0.75rem 1rem;
-  text-align: left;
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--text3);
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-
-td {
-  padding: 0.8rem 1rem;
-  border-bottom: 1px solid var(--border);
-  vertical-align: middle;
-}
-
+.filter-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.filter-tab { padding: 0.5rem 1.2rem; border-radius: 7px; border: 1px solid var(--border2); background: transparent; color: var(--text2); font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+.filter-tab.active { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
+.table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); max-height: 500px; overflow-y: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+thead { position: sticky; top: 0; z-index: 5; }
+th { background: var(--surface2); padding: 0.75rem 1rem; text-align: left; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3); border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: rgba(255,255,255,0.02); }
-
-.badge {
-  display: inline-block;
-  padding: 0.25rem 0.7rem;
-  border-radius: 99px;
-  font-size: 0.78rem;
-  font-weight: 500;
-  font-family: var(--mono);
-}
-
-.badge-blue {
-  background: var(--accent-dim);
-  color: #60a5fa;
-  border: 1px solid rgba(59,130,246,0.2);
-}
-
-.badge-amber {
-  background: rgba(245,158,11,0.1);
-  color: #fbbf24;
-  border: 1px solid rgba(245,158,11,0.2);
-}
-
+.badge { display: inline-block; padding: 0.25rem 0.7rem; border-radius: 99px; font-size: 0.78rem; font-weight: 500; font-family: var(--mono); }
+.badge-blue { background: var(--accent-dim); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); }
+.badge-amber { background: rgba(245,158,11,0.1); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); }
 .actions { display: flex; gap: 4px; flex-wrap: wrap; }
-
-.icon-btn {
-  width: 30px;
-  height: 30px;
-  border-radius: 7px;
-  border: 1px solid var(--border2);
-  background: transparent;
-  color: var(--text2);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-  transition: all 0.2s;
-}
-
+.icon-btn { width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--border2); background: transparent; color: var(--text2); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; transition: all 0.2s; }
 .icon-btn:hover.edit { background: var(--accent-dim); color: var(--accent); border-color: rgba(59,130,246,0.3); }
 .icon-btn:hover.del { background: rgba(239,68,68,0.1); color: var(--danger); border-color: rgba(239,68,68,0.3); }
 .icon-btn:hover.history { background: rgba(16,185,129,0.1); color: var(--accent2); border-color: rgba(16,185,129,0.3); }
 .icon-btn:hover.image { background: rgba(139,92,246,0.1); color: #a78bfa; border-color: rgba(139,92,246,0.3); }
-
-.thumbnail-img {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  border-radius: 6px;
-  cursor: pointer;
-  border: 1px solid var(--border);
-  transition: transform 0.2s;
-}
-
-.thumbnail-img:hover {
-  transform: scale(2);
-  z-index: 10;
-  position: relative;
-}
-
-.empty-row td {
-  text-align: center;
-  padding: 3rem;
-  color: var(--text3);
-  font-size: 0.85rem;
-}
-
-/* MODAL */
-.modal-bg {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.8);
-  z-index: 100;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(4px);
-}
-
+.thumbnail-img { width: 50px; height: 50px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); transition: transform 0.2s; }
+.thumbnail-img:hover { transform: scale(2); z-index: 10; position: relative; }
+.empty-row td { text-align: center; padding: 3rem; color: var(--text3); font-size: 0.85rem; }
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
 .modal-bg.open { display: flex; }
-
-.modal {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius-lg);
-  padding: 1.8rem;
-  width: 90%;
-  max-width: 600px;
-  animation: fadeUp 0.2s ease;
-  max-height: 85vh;
-  overflow-y: auto;
-}
-
-.modal-large {
-  max-width: 800px;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.modal h2 {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 1.3rem;
-  padding-bottom: 0.8rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.modal-footer {
-  display: flex;
-  gap: 0.7rem;
-  margin-top: 1.3rem;
-}
-
+.modal { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 1.8rem; width: 90%; max-width: 600px; animation: fadeUp 0.2s ease; max-height: 85vh; overflow-y: auto; }
+.modal-large { max-width: 800px; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.modal h2 { font-size: 1rem; font-weight: 600; margin-bottom: 1.3rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--border); }
+.modal-footer { display: flex; gap: 0.7rem; margin-top: 1.3rem; }
 .modal-footer .btn { margin: 0; }
-
-.modal-img-container {
-  text-align: center;
-}
-
-.modal-img {
-  max-width: 100%;
-  max-height: 70vh;
-  border-radius: var(--radius);
-}
-
-/* TOAST */
-.toast {
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  background: var(--surface2);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  padding: 0.8rem 1.2rem;
-  border-radius: var(--radius);
-  font-size: 0.85rem;
-  font-weight: 500;
-  transform: translateY(80px);
-  opacity: 0;
-  transition: all 0.3s;
-  z-index: 999;
-  max-width: 300px;
-}
-
+.modal-img-container { text-align: center; }
+.modal-img { max-width: 100%; max-height: 70vh; border-radius: var(--radius); }
+.toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--surface2); border: 1px solid var(--border2); color: var(--text); padding: 0.8rem 1.2rem; border-radius: var(--radius); font-size: 0.85rem; font-weight: 500; transform: translateY(80px); opacity: 0; transition: all 0.3s; z-index: 999; max-width: 300px; }
 .toast.show { transform: translateY(0); opacity: 1; }
 .toast.ok { border-color: rgba(16,185,129,0.4); color: #34d399; }
 .toast.err { border-color: rgba(239,68,68,0.4); color: #f87171; }
-
-/* EXCEL READER */
-.drop-zone {
-  border: 2px dashed var(--border2);
-  border-radius: var(--radius-lg);
-  padding: 3rem 2rem;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 1.5rem;
-}
-
-.drop-zone:hover, .drop-zone.dragover {
-  border-color: var(--accent);
-  background: var(--accent-dim);
-}
-
+.drop-zone { border: 2px dashed var(--border2); border-radius: var(--radius-lg); padding: 3rem 2rem; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 1.5rem; display: block; }
+.drop-zone:hover, .drop-zone.dragover { border-color: var(--accent); background: var(--accent-dim); }
 .drop-zone .icon { font-size: 2.5rem; margin-bottom: 0.8rem; display: block; }
 .drop-zone p { color: var(--text2); font-size: 0.9rem; }
 .drop-zone small { color: var(--text3); font-size: 0.78rem; }
 #fileInput { display: none; }
-
-.sheet-tabs {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-bottom: 1rem;
-}
-
-.sheet-tab {
-  padding: 0.35rem 0.9rem;
-  border-radius: 7px;
-  border: 1px solid var(--border2);
-  background: transparent;
-  color: var(--text2);
-  font-size: 0.78rem;
-  font-family: var(--sans);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.sheet-tab.active {
-  background: var(--accent-dim);
-  color: var(--accent);
-  border-color: rgba(59,130,246,0.3);
-}
-
-.excel-info {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-}
-
-.info-pill {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 99px;
-  padding: 0.3rem 0.9rem;
-  font-size: 0.78rem;
-  color: var(--text2);
-}
-
-.info-pill span {
-  color: var(--text);
-  font-weight: 600;
-  margin-left: 4px;
-}
-
-.excel-table-wrap {
-  overflow-x: auto;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  max-height: 500px;
-  overflow-y: auto;
-}
-
-.excel-table-wrap table td:first-child,
-.excel-table-wrap table th:first-child {
-  position: sticky;
-  left: 0;
-  background: var(--surface2);
-}
-
-.historia-item {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1rem;
-  margin-bottom: 0.8rem;
-}
-
-.historia-fecha {
-  font-size: 0.7rem;
-  color: var(--text3);
-  margin-bottom: 0.5rem;
-  font-family: var(--mono);
-}
-
-.historia-campos {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.campo-cambiado {
-  background: var(--accent-dim);
-  border-radius: 4px;
-  padding: 0.2rem 0.5rem;
-  font-size: 0.75rem;
-  font-family: var(--mono);
-}
-
-/* CHATBOT STYLES */
-.chat-float-btn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    border: none;
-    color: white;
-    font-size: 28px;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    z-index: 1000;
-    transition: all 0.3s;
-}
-
-.chat-float-btn:hover {
-    transform: scale(1.05);
-}
-
-.chat-window {
-    position: fixed;
-    bottom: 90px;
-    right: 20px;
-    width: 400px;
-    height: 580px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    z-index: 1000;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    transform: scale(0);
-    transition: transform 0.2s ease;
-    transform-origin: bottom right;
-}
-
-.chat-window.open {
-    transform: scale(1);
-}
-
-.chat-header {
-    background: var(--surface2);
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.chat-header-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.chat-header h3 {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--text);
-}
-
-.chat-header p {
-    font-size: 0.7rem;
-    color: var(--accent2);
-}
-
-.groq-badge {
-    background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(234,88,12,0.15));
-    border: 1px solid rgba(249,115,22,0.3);
-    color: #fb923c;
-    font-size: 0.65rem;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 99px;
-    letter-spacing: 0.5px;
-    font-family: var(--mono);
-}
-
-.chat-header button {
-    background: none;
-    border: none;
-    color: var(--text2);
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.chat-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.message {
-    display: flex;
-    gap: 8px;
-    max-width: 88%;
-}
-
-.message.user {
-    align-self: flex-end;
-    flex-direction: row-reverse;
-}
-
-.message-avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: var(--surface2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    flex-shrink: 0;
-}
-
-.message.user .message-avatar {
-    background: var(--accent-dim);
-}
-
-.message-content {
-    background: var(--surface2);
-    padding: 10px 14px;
-    border-radius: 12px;
-    border-bottom-left-radius: 4px;
-    font-size: 0.85rem;
-    line-height: 1.6;
-    white-space: pre-wrap;
-    word-break: break-word;
-}
-
-.message.user .message-content {
-    background: var(--accent-dim);
-    color: #93c5fd;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 4px;
-}
-
-.typing {
-    display: flex;
-    gap: 4px;
-    padding: 8px 12px;
-}
-
-.typing span {
-    width: 6px;
-    height: 6px;
-    background: var(--text3);
-    border-radius: 50%;
-    animation: typingAnim 1.4s infinite;
-}
-
+.sheet-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
+.sheet-tab { padding: 0.35rem 0.9rem; border-radius: 7px; border: 1px solid var(--border2); background: transparent; color: var(--text2); font-size: 0.78rem; font-family: var(--sans); cursor: pointer; transition: all 0.2s; }
+.sheet-tab.active { background: var(--accent-dim); color: var(--accent); border-color: rgba(59,130,246,0.3); }
+.excel-info { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.info-pill { background: var(--surface2); border: 1px solid var(--border); border-radius: 99px; padding: 0.3rem 0.9rem; font-size: 0.78rem; color: var(--text2); }
+.info-pill span { color: var(--text); font-weight: 600; margin-left: 4px; }
+.excel-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); max-height: 500px; overflow-y: auto; }
+.historia-item { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; margin-bottom: 0.8rem; }
+.historia-fecha { font-size: 0.7rem; color: var(--text3); margin-bottom: 0.5rem; font-family: var(--mono); }
+.historia-campos { display: flex; gap: 1rem; flex-wrap: wrap; }
+.campo-cambiado { background: var(--accent-dim); border-radius: 4px; padding: 0.2rem 0.5rem; font-size: 0.75rem; font-family: var(--mono); }
+.chat-float-btn { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; color: white; font-size: 28px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1000; transition: all 0.3s; }
+.chat-float-btn:hover { transform: scale(1.05); }
+.chat-window { position: fixed; bottom: 90px; right: 20px; width: 400px; height: 580px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); display: flex; flex-direction: column; overflow: hidden; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.4); transform: scale(0); transition: transform 0.2s ease; transform-origin: bottom right; }
+.chat-window.open { transform: scale(1); }
+.chat-header { background: var(--surface2); padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.chat-header-left { display: flex; align-items: center; gap: 10px; }
+.chat-header h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); }
+.chat-header p { font-size: 0.7rem; color: var(--accent2); }
+.groq-badge { background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(234,88,12,0.15)); border: 1px solid rgba(249,115,22,0.3); color: #fb923c; font-size: 0.65rem; font-weight: 600; padding: 2px 8px; border-radius: 99px; letter-spacing: 0.5px; font-family: var(--mono); }
+.chat-header button { background: none; border: none; color: var(--text2); font-size: 20px; cursor: pointer; }
+.chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.message { display: flex; gap: 8px; max-width: 88%; }
+.message.user { align-self: flex-end; flex-direction: row-reverse; }
+.message-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.message.user .message-avatar { background: var(--accent-dim); }
+.message-content { background: var(--surface2); padding: 10px 14px; border-radius: 12px; border-bottom-left-radius: 4px; font-size: 0.85rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+.message.user .message-content { background: var(--accent-dim); color: #93c5fd; border-bottom-left-radius: 12px; border-bottom-right-radius: 4px; }
+.typing { display: flex; gap: 4px; padding: 8px 12px; }
+.typing span { width: 6px; height: 6px; background: var(--text3); border-radius: 50%; animation: typingAnim 1.4s infinite; }
 .typing span:nth-child(2) { animation-delay: 0.2s; }
 .typing span:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes typingAnim {
-    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-    30% { transform: translateY(-6px); opacity: 1; }
-}
-
-.chat-input-area {
-    padding: 12px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    gap: 8px;
-    align-items: flex-end;
-}
-
-.chat-input-area input {
-    flex: 1;
-    background: var(--bg);
-    border: 1px solid var(--border2);
-    border-radius: var(--radius);
-    padding: 10px 12px;
-    font-size: 0.85rem;
-    color: var(--text);
-    outline: none;
-    font-family: var(--sans);
-    transition: border 0.2s;
-}
-
-.chat-input-area input:focus {
-    border-color: var(--accent);
-}
-
-.chat-input-area input::placeholder {
-    color: var(--text3);
-}
-
-.chat-send-btn {
-    background: var(--accent);
-    border: none;
-    border-radius: var(--radius);
-    padding: 10px 16px;
-    color: white;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.85rem;
-    font-family: var(--sans);
-    transition: background 0.2s;
-    white-space: nowrap;
-}
-
+@keyframes typingAnim { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
+.chat-input-area { padding: 12px; border-top: 1px solid var(--border); display: flex; gap: 8px; align-items: flex-end; }
+.chat-input-area input { flex: 1; background: var(--bg); border: 1px solid var(--border2); border-radius: var(--radius); padding: 10px 12px; font-size: 0.85rem; color: var(--text); outline: none; font-family: var(--sans); transition: border 0.2s; }
+.chat-input-area input:focus { border-color: var(--accent); }
+.chat-input-area input::placeholder { color: var(--text3); }
+.chat-send-btn { background: var(--accent); border: none; border-radius: var(--radius); padding: 10px 16px; color: white; cursor: pointer; font-weight: 600; font-size: 0.85rem; font-family: var(--sans); transition: background 0.2s; white-space: nowrap; }
 .chat-send-btn:hover { background: #2563eb; }
 .chat-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.chat-suggestions {
-    padding: 8px 12px;
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    border-top: 1px solid var(--border);
-}
-
-.suggestion-btn {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    border-radius: 20px;
-    padding: 5px 11px;
-    font-size: 0.72rem;
-    color: var(--text2);
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: var(--sans);
-}
-
-.suggestion-btn:hover {
-    background: var(--accent-dim);
-    color: var(--accent);
-    border-color: var(--accent);
-}
-
-.clear-chat-btn {
-    background: none;
-    border: none;
-    color: var(--text3);
-    font-size: 0.7rem;
-    cursor: pointer;
-    padding: 0 4px;
-    font-family: var(--sans);
-    transition: color 0.2s;
-}
+.chat-suggestions { padding: 8px 12px; display: flex; gap: 6px; flex-wrap: wrap; border-top: 1px solid var(--border); }
+.suggestion-btn { background: var(--surface2); border: 1px solid var(--border2); border-radius: 20px; padding: 5px 11px; font-size: 0.72rem; color: var(--text2); cursor: pointer; transition: all 0.2s; font-family: var(--sans); }
+.suggestion-btn:hover { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
+.clear-chat-btn { background: none; border: none; color: var(--text3); font-size: 0.7rem; cursor: pointer; padding: 0 4px; font-family: var(--sans); transition: color 0.2s; }
 .clear-chat-btn:hover { color: var(--text2); }
+
+/* ── LOGIN ── */
+.auth-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+.auth-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem; width: 100%; max-width: 400px; text-align: center; }
+.auth-box h2 { margin-bottom: 0.5rem; color: var(--text); }
+.auth-box p { color: var(--text3); margin-bottom: 2rem; font-size: 0.9rem; }
+.auth-box .field { text-align: left; }
+.auth-toggle { margin-top: 1.5rem; font-size: 0.85rem; color: var(--text3); }
+.auth-toggle a { color: var(--accent); cursor: pointer; text-decoration: underline; }
+.auth-user-info { display: flex; align-items: center; gap: 10px; background: var(--surface); padding: 5px 15px; border-radius: 50px; border: 1px solid var(--border); }
+.auth-user-email { font-size: 0.8rem; color: var(--text2); max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.logout-btn { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1.2rem; }
+
+/* ── BADGE usuario actual ── */
+.user-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-dim); border: 1px solid rgba(59,130,246,0.25); border-radius: 99px; padding: 3px 10px; font-size: 0.7rem; color: #93c5fd; font-family: var(--mono); margin-left: 4px; }
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="brand">
-    <div class="brand-icon">📋</div>
-    <div>
-      <h1>Registro de Folios</h1>
-      <p>Control de notas de pago · Supabase</p>
+<!-- ═══════════ PANTALLA DE LOGIN / REGISTRO ═══════════ -->
+<div id="authOverlay" class="auth-overlay">
+  <div class="auth-box">
+    <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
+    <h2 id="authTitle">Bienvenido</h2>
+    <p id="authSubtitle">Municipalidad Distrital de Chinchoa</p>
+    <div id="authForm">
+      <div class="field"><label>Correo Electrónico</label><input type="email" id="email" placeholder="usuario@muni.gob.pe" /></div>
+      <div class="field"><label>Contraseña</label><input type="password" id="password" placeholder="••••••••" /></div>
+      <button class="btn btn-primary" onclick="handleAuth()" id="authBtn">Iniciar Sesión</button>
+    </div>
+    <div class="auth-toggle">
+      <span id="authToggleText">¿No tienes cuenta?</span>
+      <a onclick="toggleAuthMode()" id="authToggleLink">Regístrate aquí</a>
     </div>
   </div>
-  <div class="status-dot">
-    <span class="dot"></span>
-    Conectado
+</div>
+
+<!-- ═══════════ APP PRINCIPAL ═══════════ -->
+<div id="appContent" style="display: none;">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-icon">📋</div>
+      <div>
+        <h1>Registro de Folios</h1>
+        <p>Municipalidad Distrital de Chinchoa</p>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+      <div class="auth-user-info">
+        <span>👤</span>
+        <span class="auth-user-email" id="userDisplayEmail">...</span>
+        <button class="logout-btn" onclick="logout()" title="Cerrar Sesión">🚪</button>
+      </div>
+      <div class="status-dot"><span class="dot"></span> Conectado</div>
+    </div>
   </div>
-</div>
 
-<!-- TABS -->
-<div class="tabs">
-  <button class="tab active" onclick="switchTab('registros')">📁 Registros</button>
-  <button class="tab" onclick="switchTab('excel')">📊 Leer Excel</button>
-  <button class="tab" onclick="switchTab('historial')">📜 Historial</button>
-  <button class="tab" onclick="switchTab('imagenes')">🖼️ Galería</button>
-  <button class="tab" onclick="switchTab('graficos')">📈 Gráficos</button>
-</div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('registros', this)">📁 Registros</button>
+    <button class="tab" onclick="switchTab('excel', this)">📊 Leer Excel</button>
+    <button class="tab" onclick="switchTab('historial', this)">📜 Historial</button>
+    <button class="tab" onclick="switchTab('imagenes', this)">🖼️ Galería</button>
+    <button class="tab" onclick="switchTab('graficos', this)">📈 Gráficos</button>
+  </div>
 
-<!-- TAB: REGISTROS -->
-<div id="tab-registros" class="tab-panel active">
-  <div class="layout">
-
-    <!-- FORM CON IMAGEN -->
-    <div>
+  <!-- TAB: REGISTROS -->
+  <div id="tab-registros" class="tab-panel active">
+    <div class="layout">
+      <div>
+        <div class="panel">
+          <div class="panel-title" id="formTitle">➕ Nuevo Registro</div>
+          <div class="field"><label>Año</label><input type="number" id="anio" min="2000" max="2030" placeholder="2025" /><small>Opcional</small></div>
+          <div class="field"><label>🏷️ Tipo de Archivador</label><input type="text" id="tipoArchivador" placeholder="Ej: Administrativo, Financiero, Legal..." /><small>Ingrese el tipo manualmente</small></div>
+          <div class="field"><label>N° Archivador</label><input type="text" id="archivador" placeholder="Ej: ARC-001" /></div>
+          <div class="field"><label>Nota de Pago (rango)</label><input type="text" id="notaPago" placeholder="Ej: 100-150" /><small>Formato: inicio-fin (fin mayor que inicio)</small></div>
+          <div class="image-upload-area" id="imageUploadArea" onclick="document.getElementById('imagenInput').click()"><span>🖼️</span><p>Haz clic para subir una imagen (opcional)</p><small>Formatos: JPG, PNG, GIF</small></div>
+          <input type="file" id="imagenInput" accept="image/*" style="display: none" onchange="previsualizarImagen(this)" />
+          <div class="image-preview" id="imagePreview" style="display: none;"><img id="previewImg" src="" alt="Vista previa" /><button type="button" class="btn-remove-img" onclick="eliminarImagenPrevisualizacion()">🗑️ Quitar imagen</button></div>
+          <button class="btn btn-primary" onclick="guardar()" id="btnGuardar">💾 Guardar Registro</button>
+          <button class="btn btn-ghost" onclick="resetForm()">✕ Limpiar</button>
+        </div>
+        <div class="stats-row">
+          <div class="stat"><span class="stat-num" id="statTotal">0</span><div class="stat-label">Archivadores</div></div>
+          <div class="stat"><span class="stat-num" id="statNotas">0</span><div class="stat-label">Total Notas</div></div>
+          <div class="stat"><span class="stat-num" id="statImagenes">0</span><div class="stat-label">Con Imagen</div></div>
+        </div>
+      </div>
       <div class="panel">
-        <div class="panel-title" id="formTitle">➕ Nuevo Registro</div>
-
-        <div class="field">
-          <label>Año</label>
-          <input type="number" id="anio" min="2000" max="2030" placeholder="2025" />
-          <small>Opcional</small>
+        <div class="panel-title">📄 Mis Registros <span class="user-badge" id="userBadge">...</span></div>
+        <div class="filter-tabs">
+          <button class="filter-tab active" onclick="setFilter('active', this)">📅 Activos (7 días)</button>
+          <button class="filter-tab" onclick="setFilter('all', this)">📊 Ver Todo</button>
         </div>
-
-        <div class="field">
-          <label>🏷️ Tipo de Archivador</label>
-          <input type="text" id="tipoArchivador" placeholder="Ej: Administrativo, Financiero, Legal..." />
-          <small>Ingrese el tipo manualmente</small>
+        <div class="toolbar">
+          <input type="text" id="busqueda" placeholder="Buscar por año, tipo, archivador, nota..." oninput="filtrar()" />
+          <button class="btn btn-green" onclick="exportarExcel()">⬇️ Exportar Excel</button>
+          <button class="btn btn-ghost" onclick="cargar()" style="width:auto;padding:0.6rem 0.9rem;">🔄</button>
         </div>
-
-        <div class="field">
-          <label>N° Archivador</label>
-          <input type="text" id="archivador" placeholder="Ej: ARC-001" />
-        </div>
-
-        <div class="field">
-          <label>Nota de Pago (rango)</label>
-          <input type="text" id="notaPago" placeholder="Ej: 100-150" />
-          <small>Formato: inicio-fin (fin mayor que inicio)</small>
-        </div>
-
-        <!-- ÁREA DE SUBIDA DE IMAGEN -->
-        <div class="image-upload-area" id="imageUploadArea" onclick="document.getElementById('imagenInput').click()">
-          <span>🖼️</span>
-          <p>Haz clic para subir una imagen (opcional)</p>
-          <small>Formatos: JPG, PNG, GIF</small>
-        </div>
-        <input type="file" id="imagenInput" accept="image/*" style="display: none" onchange="previsualizarImagen(this)" />
-        
-        <div class="image-preview" id="imagePreview" style="display: none;">
-          <img id="previewImg" src="" alt="Vista previa" />
-          <button type="button" class="btn-remove-img" onclick="eliminarImagenPrevisualizacion()">🗑️ Quitar imagen</button>
-        </div>
-
-        <button class="btn btn-primary" onclick="guardar()" id="btnGuardar">
-          💾 Guardar Registro
-        </button>
-        <button class="btn btn-ghost" onclick="resetForm()">
-          ✕ Limpiar
-        </button>
-      </div>
-
-      <div class="stats-row">
-        <div class="stat">
-          <span class="stat-num" id="statTotal">0</span>
-          <div class="stat-label">Archivadores</div>
-        </div>
-        <div class="stat">
-          <span class="stat-num" id="statNotas">0</span>
-          <div class="stat-label">Total Notas</div>
-        </div>
-        <div class="stat">
-          <span class="stat-num" id="statImagenes">0</span>
-          <div class="stat-label">Con Imagen</div>
+        <div class="table-wrap">
+          <table id="tablaRegistros">
+            <thead><tr><th>#</th><th>Año</th><th>🏷️ Tipo</th><th>Archivador</th><th>Nota de Pago</th><th>Cant.</th><th>Imagen</th><th>Acciones</th></tr></thead>
+            <tbody id="tbody"><tr class="empty-row"><td colspan="8">Cargando...</td></tr></tbody>
+          </table>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- TABLE -->
+  <!-- TAB: LEER EXCEL -->
+  <div id="tab-excel" class="tab-panel">
     <div class="panel">
-      <div class="panel-title">📄 Tabla de Registros</div>
+      <div class="panel-title">📊 Leer archivo Excel (.xlsx / .xls / .csv)</div>
+      <div class="drop-zone" id="dropZone"><span class="icon">📂</span><p>Haz clic o arrastra tu archivo aquí</p><small>Compatible con .xlsx · .xls · .csv</small></div>
+      <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="leerArchivo(this)" />
+      <div id="excelOutput" style="display:none;">
+        <div class="excel-info">
+          <div class="info-pill">📄 Archivo: <span id="fileName">—</span></div>
+          <div class="info-pill">📋 Hojas: <span id="sheetCount">—</span></div>
+          <div class="info-pill">📊 Filas: <span id="rowCount">—</span></div>
+          <div class="info-pill">📐 Columnas: <span id="colCount">—</span></div>
+        </div>
+        <div class="sheet-tabs" id="sheetTabs"></div>
+        <div class="excel-table-wrap"><table id="excelTable"></table></div>
+        <div style="display: flex; gap: 0.7rem; margin-top: 1rem; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="exportarExcelImportado()" style="width: auto;">📥 Exportar a Excel</button>
+          <button class="btn btn-warning" onclick="importarABaseDeDatos()" style="width: auto;">💾 Importar a Registro</button>
+          <button class="btn btn-ghost" onclick="limpiarVistaExcel()" style="width: auto; color: var(--danger);">🗑️ Cerrar Archivo</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- TAB: HISTORIAL -->
+  <div id="tab-historial" class="tab-panel">
+    <div class="panel">
+      <div class="panel-title">📜 Historial de mis Registros</div>
       <div class="toolbar">
-        <input type="text" id="busqueda" placeholder="Buscar por año, tipo, archivador, nota..." oninput="filtrar()" />
-        <button class="btn btn-green" onclick="exportarExcel()">⬇️ Exportar Excel</button>
-        <button class="btn btn-ghost" onclick="cargar()" style="width:auto;padding:0.6rem 0.9rem;">🔄</button>
+        <input type="text" id="historialBusqueda" placeholder="Buscar por archivador..." oninput="filtrarHistorial()" />
+        <button class="btn btn-ghost" onclick="cargarHistorial()" style="width:auto;">🔄 Actualizar</button>
       </div>
+      <div id="historialLista" style="max-height: 500px; overflow-y: auto;"><div style="text-align:center; padding:2rem; color:var(--text3);">Cargando historial...</div></div>
+    </div>
+  </div>
 
-      <div class="table-wrap">
-        <table id="tablaRegistros">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Año</th>
-              <th>🏷️ Tipo</th>
-              <th>Archivador</th>
-              <th>Nota de Pago</th>
-              <th>Cant.</th>
-              <th>Imagen</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tbody">
-            <tr class="empty-row"><td colspan="8">Cargando...</td></tr>
-          </tbody>
-        </table>
+  <!-- TAB: GALERÍA -->
+  <div id="tab-imagenes" class="tab-panel">
+    <div class="panel">
+      <div class="panel-title">🖼️ Mi Galería de Imágenes</div>
+      <div class="toolbar">
+        <input type="text" id="galeriaBusqueda" placeholder="Buscar por archivador..." oninput="filtrarGaleria()" />
+        <button class="btn btn-ghost" onclick="cargarGaleria()" style="width:auto;">🔄 Actualizar</button>
       </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- TAB: LEER EXCEL -->
-<div id="tab-excel" class="tab-panel">
-  <div class="panel">
-    <div class="panel-title">📊 Leer archivo Excel (.xlsx / .xls / .csv)</div>
-
-    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-      <span class="icon">📂</span>
-      <p>Haz clic o arrastra tu archivo aquí</p>
-      <small>Compatible con .xlsx · .xls · .csv</small>
-    </div>
-    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="leerArchivo(this)" />
-
-    <div id="excelOutput">
-      <div class="excel-info">
-        <div class="info-pill">📄 Archivo: <span id="fileName">—</span></div>
-        <div class="info-pill">📑 Hojas: <span id="sheetCount">—</span></div>
-        <div class="info-pill">📊 Filas: <span id="rowCount">—</span></div>
-        <div class="info-pill">📐 Columnas: <span id="colCount">—</span></div>
-      </div>
-
-      <div class="sheet-tabs" id="sheetTabs"></div>
-
-      <div class="excel-table-wrap">
-        <table id="excelTable"></table>
-      </div>
-
-      <div style="display: flex; gap: 0.7rem; margin-top: 1rem;">
-        <button class="btn btn-primary" onclick="exportarExcelImportado()" style="width: auto;">📥 Exportar a Excel</button>
-        <button class="btn btn-green" onclick="copiarExcelComoJSON()" style="width: auto;">📋 Copiar como JSON</button>
-      </div>
+      <div id="galeriaLista" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;"></div>
     </div>
   </div>
-</div>
 
-<!-- TAB: HISTORIAL -->
-<div id="tab-historial" class="tab-panel">
-  <div class="panel">
-    <div class="panel-title">📜 Historial de Cambios</div>
-    
-    <div class="toolbar">
-      <input type="text" id="historialBusqueda" placeholder="Buscar por archivador..." oninput="filtrarHistorial()" />
-      <button class="btn btn-ghost" onclick="cargarHistorial()" style="width:auto;">🔄 Actualizar</button>
+  <!-- TAB: GRÁFICOS -->
+  <div id="tab-graficos" class="tab-panel">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; flex-wrap:wrap; gap:0.7rem;">
+      <div><h2 style="font-size:1rem;font-weight:600;">📊 Mi Dashboard</h2><p style="font-size:0.72rem;color:var(--text3);margin-top:2px;">Tus datos en tiempo real</p></div>
+      <button class="btn btn-ghost" onclick="cargarGraficos()" style="width:auto;padding:0.4rem 0.9rem;font-size:0.8rem;">🔄 Actualizar</button>
     </div>
-
-    <div id="historialLista" style="max-height: 500px; overflow-y: auto;">
-      <div style="text-align:center; padding:2rem; color:var(--text3);">Cargando historial...</div>
-    </div>
-  </div>
-</div>
-
-<!-- TAB: GALERÍA DE IMÁGENES -->
-<div id="tab-imagenes" class="tab-panel">
-  <div class="panel">
-    <div class="panel-title">🖼️ Galería de Imágenes</div>
-    
-    <div class="toolbar">
-      <input type="text" id="galeriaBusqueda" placeholder="Buscar por archivador..." oninput="filtrarGaleria()" />
-      <button class="btn btn-ghost" onclick="cargarGaleria()" style="width:auto;">🔄 Actualizar</button>
-    </div>
-
-    <div id="galeriaLista" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
-      <div style="text-align:center; padding:2rem; color:var(--text3);">Cargando imágenes...</div>
+    <div id="kpiRow" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0.7rem;margin-bottom:1rem;"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+      <div class="panel" style="padding:1rem;"><div class="panel-title" style="margin-bottom:0.7rem;">📅 Notas por año</div><div style="position:relative;height:180px;"><canvas id="chartAnio"></canvas></div></div>
+      <div class="panel" style="padding:1rem;"><div class="panel-title" style="margin-bottom:0.7rem;">🍩 Top archivadores</div><div style="position:relative;height:180px;"><canvas id="chartDonut"></canvas></div></div>
+      <div class="panel" style="padding:1rem;"><div class="panel-title" style="margin-bottom:0.7rem;">🖼️ Con / Sin imagen</div><div style="position:relative;height:180px;"><canvas id="chartImagen"></canvas></div></div>
+      <div class="panel" style="padding:1rem;grid-column:1/3;"><div class="panel-title" style="margin-bottom:0.7rem;">📆 Registros acumulados por mes</div><div style="position:relative;height:150px;"><canvas id="chartLinea"></canvas></div></div>
+      <div class="panel" style="padding:1rem;"><div class="panel-title" style="margin-bottom:0.7rem;">📏 Tamaño de rangos</div><div style="position:relative;height:150px;"><canvas id="chartRangos"></canvas></div></div>
     </div>
   </div>
-</div>
 
-<!-- TAB: GRÁFICOS -->
-<div id="tab-graficos" class="tab-panel">
-  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; flex-wrap:wrap; gap:0.7rem;">
-    <div>
-      <h2 style="font-size:1rem;font-weight:600;">📈 Dashboard de Gráficos</h2>
-      <p style="font-size:0.72rem;color:var(--text3);margin-top:2px;">Visualización en tiempo real</p>
-    </div>
-    <button class="btn btn-ghost" onclick="cargarGraficos()" style="width:auto;padding:0.4rem 0.9rem;font-size:0.8rem;">🔄 Actualizar</button>
-  </div>
-
-  <!-- KPI row -->
-  <div id="kpiRow" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0.7rem;margin-bottom:1rem;"></div>
-
-  <!-- Charts grid 3 columnas -->
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
-
-    <div class="panel" style="padding:1rem;">
-      <div class="panel-title" style="margin-bottom:0.7rem;">📅 Notas por año</div>
-      <div style="position:relative;height:180px;"><canvas id="chartAnio"></canvas></div>
-    </div>
-
-    <div class="panel" style="padding:1rem;">
-      <div class="panel-title" style="margin-bottom:0.7rem;">🍩 Top archivadores</div>
-      <div style="position:relative;height:180px;"><canvas id="chartDonut"></canvas></div>
-    </div>
-
-    <div class="panel" style="padding:1rem;">
-      <div class="panel-title" style="margin-bottom:0.7rem;">🖼️ Con / Sin imagen</div>
-      <div style="position:relative;height:180px;"><canvas id="chartImagen"></canvas></div>
-    </div>
-
-    <div class="panel" style="padding:1rem;grid-column:1/3;">
-      <div class="panel-title" style="margin-bottom:0.7rem;">📆 Registros acumulados por mes</div>
-      <div style="position:relative;height:150px;"><canvas id="chartLinea"></canvas></div>
-    </div>
-
-    <div class="panel" style="padding:1rem;">
-      <div class="panel-title" style="margin-bottom:0.7rem;">📊 Tamaño de rangos</div>
-      <div style="position:relative;height:150px;"><canvas id="chartRangos"></canvas></div>
-    </div>
-
-  </div>
-</div>
-
-<!-- MODAL EDITAR -->
-<div class="modal-bg" id="modalBg">
-  <div class="modal">
-    <h2>✏️ Editar Registro</h2>
-    <div class="field">
-      <label>Año</label>
-      <input type="number" id="eAnio" min="2000" max="2030" />
-    </div>
-    <div class="field">
-      <label>🏷️ Tipo de Archivador</label>
-      <input type="text" id="eTipoArchivador" placeholder="Ej: Administrativo, Financiero..." />
-    </div>
-    <div class="field">
-      <label>N° Archivador</label>
-      <input type="text" id="eArchivador" />
-    </div>
-    <div class="field">
-      <label>Nota de Pago</label>
-      <input type="text" id="eNota" />
-    </div>
-    
-    <!-- SECCIÓN DE IMAGEN EN EDICIÓN -->
-    <div class="field">
-      <label>🖼️ Imagen del Registro</label>
-      <div id="editImageContainer">
-        <div class="image-upload-area" onclick="document.getElementById('editImagenInput').click()">
-          <span>📸</span>
-          <p>Haz clic para cambiar la imagen</p>
-          <small>O deja la actual si no quieres modificarla</small>
+  <!-- MODALES -->
+  <div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <h2>✏️ Editar Registro</h2>
+      <div class="field"><label>Año</label><input type="number" id="eAnio" min="2000" max="2030" /></div>
+      <div class="field"><label>🏷️ Tipo de Archivador</label><input type="text" id="eTipoArchivador" placeholder="Ej: Administrativo, Financiero..." /></div>
+      <div class="field"><label>N° Archivador</label><input type="text" id="eArchivador" /></div>
+      <div class="field"><label>Nota de Pago</label><input type="text" id="eNota" /></div>
+      <div class="field">
+        <label>🖼️ Imagen del Registro</label>
+        <div id="editImageContainer">
+          <div class="image-upload-area" onclick="document.getElementById('editImagenInput').click()"><span>📷</span><p>Haz clic para cambiar la imagen</p><small>O deja la actual si no quieres modificarla</small></div>
+          <input type="file" id="editImagenInput" accept="image/*" style="display: none" onchange="previsualizarImagenEdicion(this)" />
         </div>
-        <input type="file" id="editImagenInput" accept="image/*" style="display: none" onchange="previsualizarImagenEdicion(this)" />
+        <div class="image-preview" id="editImagePreview" style="display: none;"><img id="editPreviewImg" src="" alt="Vista previa" /><button type="button" class="btn-remove-img" onclick="eliminarImagenEdicion()">🗑️ Eliminar imagen</button></div>
+        <div id="editImageActual" style="display: none; text-align: center; margin-top: 1rem;"><p style="font-size: 0.75rem; color: var(--text3); margin-bottom: 0.5rem;">Imagen actual:</p><img id="editImagenActualImg" src="" alt="Imagen actual" style="max-width: 100%; max-height: 150px; border-radius: var(--radius); border: 1px solid var(--border);" /></div>
       </div>
-      
-      <div class="image-preview" id="editImagePreview" style="display: none;">
-        <img id="editPreviewImg" src="" alt="Vista previa" />
-        <button type="button" class="btn-remove-img" onclick="eliminarImagenEdicion()">🗑️ Eliminar imagen</button>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="cerrarModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="actualizar()">Guardar cambios</button>
       </div>
-      
-      <div id="editImageActual" style="display: none; text-align: center; margin-top: 1rem;">
-        <p style="font-size: 0.75rem; color: var(--text3); margin-bottom: 0.5rem;">Imagen actual:</p>
-        <img id="editImagenActualImg" src="" alt="Imagen actual" style="max-width: 100%; max-height: 150px; border-radius: var(--radius); border: 1px solid var(--border);" />
-      </div>
-    </div>
-    
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="cerrarModal()">Cancelar</button>
-      <button class="btn btn-primary" onclick="actualizar()">Guardar cambios</button>
     </div>
   </div>
-</div>
 
-<!-- MODAL VER IMAGEN GRANDE -->
-<div class="modal-bg" id="modalImagenBg">
-  <div class="modal modal-large">
-    <h2>🖼️ Imagen del Registro</h2>
-    <div class="modal-img-container">
-      <img id="modalImagenGrande" src="" alt="Imagen grande" class="modal-img" />
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="cerrarModalImagen()">Cerrar</button>
-      <button class="btn btn-primary" onclick="descargarImagen()">📥 Descargar</button>
+  <div class="modal-bg" id="modalImagenBg">
+    <div class="modal modal-large">
+      <h2>🖼️ Imagen del Registro</h2>
+      <div class="modal-img-container"><img id="modalImagenGrande" src="" alt="Imagen grande" class="modal-img" /></div>
+      <div class="modal-footer"><button class="btn btn-ghost" onclick="cerrarModalImagen()">Cerrar</button><button class="btn btn-primary" onclick="descargarImagen()">📥 Descargar</button></div>
     </div>
   </div>
-</div>
 
-<!-- CHATBOT con Groq IA -->
-<button class="chat-float-btn" id="chatFloatBtn" onclick="toggleChat()">
-    💬
-</button>
-
-<div class="chat-window" id="chatWindow">
+  <!-- CHATBOT -->
+  <button class="chat-float-btn" id="chatFloatBtn" onclick="toggleChat()">💬</button>
+  <div class="chat-window" id="chatWindow">
     <div class="chat-header">
-        <div class="chat-header-left">
-            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:16px;">🤖</div>
-            <div>
-                <h3>Asistente Muni Folio</h3>
-                <p>Powered by <span class="groq-badge">GROQ AI</span></p>
-            </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;">
-            <button class="clear-chat-btn" onclick="limpiarChat()" title="Limpiar conversación">🗑️</button>
-            <button onclick="toggleChat()" style="background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;">✕</button>
-        </div>
+      <div class="chat-header-left">
+        <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:16px;">🤖</div>
+        <div><h3>Asistente Muni Folio</h3><p>Powered by <span class="groq-badge">GROQ AI</span></p></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="clear-chat-btn" onclick="limpiarChat()" title="Limpiar conversación">🗑️</button>
+        <button onclick="toggleChat()" style="background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;">✕</button>
+      </div>
     </div>
     <div class="chat-messages" id="chatMessages">
-        <div class="message bot">
-            <div class="message-avatar">🤖</div>
-            <div class="message-content">¡Hola! Soy tu asistente inteligente con IA real (Groq).
-
-Tengo acceso a todos tus registros de folios en tiempo real. Puedo responder preguntas en lenguaje natural como:
-
-📁 "¿Cuántos archivadores hay?"
-📄 "¿Cuántas notas de pago tengo?"
-🔍 "Busca el archivador ARC-001"
-📅 "¿Qué registros hay del 2024?"
-📋 "Dame un resumen completo"
-
-¿Qué necesitas saber?</div>
-        </div>
+      <div class="message bot"><div class="message-avatar">🤖</div><div class="message-content">¡Hola! Soy tu asistente inteligente. Solo veo tus registros personales. ¿Qué necesitas?</div></div>
     </div>
     <div class="chat-suggestions">
-        <button class="suggestion-btn" onclick="enviarSugerencia('¿Cuántos archivadores hay en total?')">📁 Total archivadores</button>
-        <button class="suggestion-btn" onclick="enviarSugerencia('¿Cuántas notas de pago hay en total?')">📄 Total notas</button>
-        <button class="suggestion-btn" onclick="enviarSugerencia('Dame un resumen completo del sistema')">📊 Resumen</button>
-        <button class="suggestion-btn" onclick="enviarSugerencia('Muéstrame los últimos 5 registros')">📋 Últimos registros</button>
+      <button class="suggestion-btn" onclick="enviarSugerencia('¿Cuántos archivadores tengo?')">📁 Mis archivadores</button>
+      <button class="suggestion-btn" onclick="enviarSugerencia('¿Cuántas notas de pago tengo en total?')">📄 Mis notas</button>
+      <button class="suggestion-btn" onclick="enviarSugerencia('Dame un resumen de mis registros')">📊 Mi resumen</button>
+      <button class="suggestion-btn" onclick="enviarSugerencia('Muéstrame mis últimos 5 registros')">📋 Últimos registros</button>
     </div>
     <div class="chat-input-area">
-        <input type="text" id="chatInput" placeholder="Pregunta algo sobre tus folios..." onkeypress="if(event.key==='Enter' && !event.shiftKey) enviarMensaje()">
-        <button class="chat-send-btn" id="chatSendBtn" onclick="enviarMensaje()">Enviar</button>
+      <input type="text" id="chatInput" placeholder="Pregunta sobre tus folios..." onkeypress="if(event.key==='Enter') enviarMensaje()">
+      <button class="chat-send-btn" id="chatSendBtn" onclick="enviarMensaje()">Enviar</button>
     </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
 </div>
 
-<div id="toast" class="toast"></div>
-
 <script>
+/* ════════════════════════════════════════════
+   CONFIGURACIÓN
+════════════════════════════════════════════ */
 const { createClient } = supabase;
 const db = createClient(
   'https://mqhdqszvmuuoskjlhyin.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xaGRxc3p2bXV1b3NramxoeWluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzI5NTcsImV4cCI6MjA5Mzc0ODk1N30.EqoKZfkgZDk98L3PjQ4CkB3DbCjJgROSPrh8EkqwS1g'
 );
-
-// ─── GROQ CONFIG ───────────────────────────────────────────────────────────────
 const GROQ_API_KEY = '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';
 const GROQ_MODEL   = 'llama-3.3-70b-versatile';
 const GROQ_URL     = 'https://api.groq.com/openai/v1/chat/completions';
 
-// Historial de conversación para contexto multi-turno
+/* ── Estado global ── */
 let chatHistory = [];
-
 let todos = [];
 let editId = null;
 let historial = [];
 let imagenBase64 = null;
 let imagenActualId = null;
 let imagenActualUrl = null;
-
-// Variables para edición de imagen
 let imagenEdicionBase64 = null;
 let registroEditandoImagenActual = null;
 let eliminarImagenEnEdicion = false;
+let filtroActivo = 'active';
+let datosExcelParaImportar = [];
+let isLoginMode = true;
 
-/* ---- TABS ---- */
-function switchTab(name) {
+/* ── Usuario actual (se llena al iniciar sesión) ── */
+let currentUserId   = null;
+let currentUserEmail = null;
+
+/* ════════════════════════════════════════════
+   AUTENTICACIÓN
+════════════════════════════════════════════ */
+async function checkSession() {
+  const { data: { session } } = await db.auth.getSession();
+  if (session) {
+    inicializarUsuario(session.user);
+  } else {
+    showAuth();
+  }
+}
+
+function inicializarUsuario(user) {
+  currentUserId    = user.id;
+  currentUserEmail = user.email;
+  showApp(user.email);
+}
+
+function showAuth() {
+  document.getElementById('authOverlay').style.display = 'flex';
+  document.getElementById('appContent').style.display = 'none';
+  /* Limpiar estado para que no queden datos del usuario anterior */
+  todos = []; currentUserId = null; currentUserEmail = null;
+}
+
+function showApp(email) {
+  document.getElementById('authOverlay').style.display = 'none';
+  document.getElementById('appContent').style.display = 'block';
+  document.getElementById('userDisplayEmail').textContent = email;
+  /* Mostrar ID abreviado en el badge de la tabla */
+  document.getElementById('userBadge').textContent = email.split('@')[0];
+  cargar();
+}
+
+function toggleAuthMode() {
+  isLoginMode = !isLoginMode;
+  document.getElementById('authTitle').textContent     = isLoginMode ? 'Bienvenido' : 'Crear Cuenta';
+  document.getElementById('authBtn').textContent       = isLoginMode ? 'Iniciar Sesión' : 'Registrarse';
+  document.getElementById('authToggleText').textContent = isLoginMode ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?';
+  document.getElementById('authToggleLink').textContent = isLoginMode ? 'Regístrate aquí' : 'Inicia Sesión';
+}
+
+async function handleAuth() {
+  const email    = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  if (!email || !password) { toast('Completa todos los campos', 'err'); return; }
+  const btn = document.getElementById('authBtn');
+  btn.disabled = true; btn.textContent = '⏳ Procesando...';
+  const res = isLoginMode
+    ? await db.auth.signInWithPassword({ email, password })
+    : await db.auth.signUp({ email, password });
+  btn.disabled = false;
+  btn.textContent = isLoginMode ? 'Iniciar Sesión' : 'Registrarse';
+  if (res.error) {
+    toast(res.error.message, 'err');
+  } else {
+    if (!isLoginMode && res.data.user) {
+      toast('✅ Cuenta creada. ¡Ya puedes iniciar sesión!', 'ok');
+      toggleAuthMode();
+    } else {
+      toast('✅ Bienvenido', 'ok');
+      inicializarUsuario(res.data.user);
+    }
+  }
+}
+
+async function logout() {
+  await db.auth.signOut();
+  /* Vaciar estado en memoria antes de mostrar login */
+  todos = []; currentUserId = null; currentUserEmail = null;
+  document.getElementById('tbody').innerHTML = '<tr class="empty-row"><td colspan="8">Sin sesión</td></tr>';
+  showAuth();
+  toast('Sesión cerrada');
+}
+
+checkSession();
+
+/* ════════════════════════════════════════════
+   TABS & FILTROS
+════════════════════════════════════════════ */
+function switchTab(name, btn) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
-  event.target.classList.add('active');
+  btn.classList.add('active');
   if (name === 'historial') cargarHistorial();
   else if (name === 'imagenes') cargarGaleria();
   else if (name === 'graficos') cargarGraficos();
 }
 
-/* ---- TOAST ---- */
+function setFilter(tipo, btn) {
+  filtroActivo = tipo;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderTabla(todos);
+}
+
+function esReciente(fechaString) {
+  return (new Date() - new Date(fechaString)) / (1000 * 60 * 60 * 24) <= 7;
+}
+
+/* ════════════════════════════════════════════
+   UTILIDADES
+════════════════════════════════════════════ */
 function toast(msg, tipo = 'ok') {
   const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'toast show ' + tipo;
+  el.textContent = msg; el.className = 'toast show ' + tipo;
   setTimeout(() => el.className = 'toast', 3000);
 }
 
-/* ---- VALIDAR ---- */
 function validar(nota) {
   if (!nota) return false;
-  const r = /^\d+-\d+$/;
-  if (!r.test(nota)) return false;
+  if (!/^\d+-\d+$/.test(nota)) return false;
   const [a, b] = nota.split('-').map(Number);
   return b > a;
 }
 
-/* ---- PREVISUALIZAR IMAGEN (FORMULARIO PRINCIPAL) ---- */
+/* ── Verifica que hay sesión activa antes de operar ── */
+function requireUser() {
+  if (!currentUserId) { toast('Debes iniciar sesión', 'err'); return false; }
+  return true;
+}
+
+/* ════════════════════════════════════════════
+   IMÁGENES
+════════════════════════════════════════════ */
 function previsualizarImagen(input) {
   if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      imagenBase64 = e.target.result;
-      document.getElementById('previewImg').src = imagenBase64;
-      document.getElementById('imagePreview').style.display = 'block';
-    };
-    reader.readAsDataURL(input.files[0]);
+    const r = new FileReader();
+    r.onload = e => { imagenBase64 = e.target.result; document.getElementById('previewImg').src = imagenBase64; document.getElementById('imagePreview').style.display = 'block'; };
+    r.readAsDataURL(input.files[0]);
   }
 }
-
 function eliminarImagenPrevisualizacion() {
-  imagenBase64 = null;
-  document.getElementById('imagenInput').value = '';
-  document.getElementById('imagePreview').style.display = 'none';
-  document.getElementById('previewImg').src = '';
+  imagenBase64 = null; document.getElementById('imagenInput').value = '';
+  document.getElementById('imagePreview').style.display = 'none'; document.getElementById('previewImg').src = '';
 }
-
-/* ---- PREVISUALIZAR IMAGEN EDICIÓN (MODAL) ---- */
 function previsualizarImagenEdicion(input) {
   if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
+    const r = new FileReader();
+    r.onload = e => {
       imagenEdicionBase64 = e.target.result;
       document.getElementById('editPreviewImg').src = imagenEdicionBase64;
       document.getElementById('editImagePreview').style.display = 'block';
       document.getElementById('editImageActual').style.display = 'none';
       eliminarImagenEnEdicion = false;
     };
-    reader.readAsDataURL(input.files[0]);
+    r.readAsDataURL(input.files[0]);
   }
 }
-
 function eliminarImagenEdicion() {
-  imagenEdicionBase64 = null;
-  eliminarImagenEnEdicion = true;
+  imagenEdicionBase64 = null; eliminarImagenEnEdicion = true;
   document.getElementById('editImagenInput').value = '';
   document.getElementById('editImagePreview').style.display = 'none';
   document.getElementById('editImageActual').style.display = 'none';
 }
-
 function resetearImagenEdicion() {
-  imagenEdicionBase64 = null;
-  eliminarImagenEnEdicion = false;
+  imagenEdicionBase64 = null; eliminarImagenEnEdicion = false;
   document.getElementById('editImagenInput').value = '';
   document.getElementById('editImagePreview').style.display = 'none';
   document.getElementById('editImageActual').style.display = 'none';
   document.getElementById('editPreviewImg').src = '';
 }
 
-/* ---- CARGAR ---- */
+/* ════════════════════════════════════════════
+   CARGAR & RENDERIZAR  — FILTRADO POR user_id
+════════════════════════════════════════════ */
 async function cargar() {
+  if (!requireUser()) return;
+  /*
+   * 🔑 CLAVE: filtramos por user_id = currentUserId
+   * Cada usuario solo recibe SUS propios registros.
+   * Si tienes RLS activado en Supabase, este filtro
+   * es redundante pero no hace daño (doble seguridad).
+   */
   const { data, error } = await db
     .from('registro_folios_v3')
     .select('*')
+    .eq('user_id', currentUserId)           // ← FILTRO POR USUARIO
     .order('created_at', { ascending: false });
+
   if (error) { toast('Error al cargar: ' + error.message, 'err'); return; }
   todos = data || [];
   renderTabla(todos);
   renderStats();
 }
 
-/* ---- RENDERIZAR TABLA ---- */
 function renderTabla(registros) {
   const tbody = document.getElementById('tbody');
-  if (!registros.length) {
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="8">Sin registros aún</td></tr>';
+  let lista = filtroActivo === 'active'
+    ? registros.filter(r => esReciente(r.created_at))
+    : registros;
+  if (!lista.length) {
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="8">${filtroActivo === 'active' ? 'No hay registros activos (últimos 7 días)' : 'Sin registros aún'}</td></tr>`;
     return;
   }
-  tbody.innerHTML = registros.map((r, i) => `
+  lista = [...lista].sort((a, b) => {
+    const dA = parseInt(a.anio) || 0, dB = parseInt(b.anio) || 0;
+    if (dA !== dB) return dA - dB;
+    return (parseInt(a.archivador) || 0) - (parseInt(b.archivador) || 0);
+  });
+  tbody.innerHTML = lista.map((r, i) => `
     <tr>
       <td style="color:var(--text3);font-family:var(--mono)">${i + 1}</td>
       <td><span style="font-family:var(--mono);color:var(--text2)">${r.anio || '—'}</span></td>
@@ -1396,59 +622,92 @@ function renderTabla(registros) {
       <td><span class="badge badge-blue">${r.archivador}</span></td>
       <td><span class="badge badge-amber">${r.nota_pago_rango}</span></td>
       <td style="font-family:var(--mono);color:var(--text3)">${r.cantidad_notas}</td>
-      <td>
-        ${r.imagen_url ? `<img src="${r.imagen_url}" class="thumbnail-img" onclick="verImagenGrande('${r.imagen_url}', ${r.id})" title="Ver imagen" />` : '<span style="color:var(--text3);">Sin imagen</span>'}
-      </td>
-      <td>
-        <div class="actions">
-          <button class="icon-btn edit" onclick="abrirEditar(${r.id})" title="Editar">✏️</button>
-          <button class="icon-btn del" onclick="eliminar(${r.id})" title="Eliminar">🗑️</button>
-          <button class="icon-btn history" onclick="verHistorialItem(${r.id})" title="Historial">📜</button>
-          ${r.imagen_url ? `<button class="icon-btn image" onclick="verImagenGrande('${r.imagen_url}', ${r.id})" title="Ver imagen">🖼️</button>` : ''}
-        </div>
-      </td>
-    </tr>
-  `).join('');
+      <td>${r.imagen_url ? `<img src="${r.imagen_url}" class="thumbnail-img" onclick="verImagenGrande('${r.imagen_url}', ${r.id})" />` : '<span style="color:var(--text3);">—</span>'}</td>
+      <td><div class="actions">
+        <button class="icon-btn edit" onclick="abrirEditar(${r.id})">✏️</button>
+        <button class="icon-btn del"  onclick="eliminar(${r.id})">🗑️</button>
+        <button class="icon-btn history" onclick="verHistorialItem(${r.id})">📜</button>
+        ${r.imagen_url ? `<button class="icon-btn image" onclick="verImagenGrande('${r.imagen_url}', ${r.id})">🖼️</button>` : ''}
+      </div></td>
+    </tr>`).join('');
 }
 
-/* ---- STATS ---- */
 function renderStats() {
-  document.getElementById('statTotal').textContent = todos.length;
-  const total = todos.reduce((s, r) => s + (r.cantidad_notas || 0), 0);
-  document.getElementById('statNotas').textContent = total;
-  const conImagen = todos.filter(r => r.imagen_url).length;
-  document.getElementById('statImagenes').textContent = conImagen;
+  document.getElementById('statTotal').textContent   = todos.length;
+  document.getElementById('statNotas').textContent   = todos.reduce((s, r) => s + (r.cantidad_notas || 0), 0);
+  document.getElementById('statImagenes').textContent = todos.filter(r => r.imagen_url).length;
 }
 
-/* ---- FILTRAR ---- */
 function filtrar() {
   const q = document.getElementById('busqueda').value.toLowerCase();
-  const f = todos.filter(r =>
+  let f = filtroActivo === 'active' ? todos.filter(r => esReciente(r.created_at)) : [...todos];
+  if (q) f = f.filter(r =>
     (r.anio && r.anio.toString().includes(q)) ||
     (r.tipo_archivador && r.tipo_archivador.toLowerCase().includes(q)) ||
     r.archivador.toLowerCase().includes(q) ||
     r.nota_pago_rango.includes(q)
   );
-  renderTabla(q ? f : todos);
+  renderTabla(f);
 }
 
-/* ---- GUARDAR CON IMAGEN ---- */
-async function guardar() {
-  const anio = document.getElementById('anio').value.trim();
-  const tipoArchivador = document.getElementById('tipoArchivador').value.trim();
-  const archivador = document.getElementById('archivador').value.trim();
-  const nota = document.getElementById('notaPago').value.trim();
+/* ════════════════════════════════════════════
+   EXPORTAR EXCEL
+════════════════════════════════════════════ */
+function exportarExcel() {
+  if (!todos.length) { toast('No hay datos para exportar', 'err'); return; }
+  let registros = filtroActivo === 'active' ? todos.filter(r => esReciente(r.created_at)) : [...todos];
+  const busqueda = document.getElementById('busqueda').value.toLowerCase();
+  if (busqueda) {
+    registros = registros.filter(r =>
+      (r.anio && r.anio.toString().includes(busqueda)) ||
+      (r.tipo_archivador && r.tipo_archivador.toLowerCase().includes(busqueda)) ||
+      r.archivador.toLowerCase().includes(busqueda) ||
+      r.nota_pago_rango.includes(busqueda)
+    );
+  }
+  if (!registros.length) { toast('Sin registros con el filtro actual', 'err'); return; }
+  registros.sort((a, b) => {
+    const aA = parseInt(a.anio) || 0, aB = parseInt(b.anio) || 0;
+    if (aA !== aB) return aA - aB;
+    return (parseInt(a.archivador) || 0) - (parseInt(b.archivador) || 0);
+  });
+  const filas = registros.map(r => ({
+    'AÑO': r.anio || '',
+    'TIPO ARCHIVADOR': r.tipo_archivador || '',
+    'ARCHIVADOR': r.archivador,
+    'NOTA DE PAGO': r.nota_pago_rango,
+    'NOTA INICIO': r.nota_pago_inicio || '',
+    'NOTA FIN': r.nota_pago_fin || '',
+    'CANTIDAD NOTAS': r.cantidad_notas || 0,
+    'TIENE IMAGEN': r.imagen_url ? 'Sí' : 'No',
+    'FECHA REGISTRO': new Date(r.created_at).toLocaleString('es-PE')
+  }));
+  const ws = XLSX.utils.json_to_sheet(filas);
+  ws['!cols'] = Object.keys(filas[0]).map(k => ({ wch: Math.max(k.length, ...filas.map(r => String(r[k] || '').length)) + 2 }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Mis Folios');
+  XLSX.writeFile(wb, `mis_folios_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  toast(`✅ Excel exportado (${registros.length} registros)`, 'ok');
+}
 
+/* ════════════════════════════════════════════
+   CRUD — TODOS LOS INSERTS INCLUYEN user_id
+════════════════════════════════════════════ */
+async function guardar() {
+  if (!requireUser()) return;
+  const anio       = document.getElementById('anio').value.trim();
+  const tipo       = document.getElementById('tipoArchivador').value.trim();
+  const archivador = document.getElementById('archivador').value.trim();
+  const nota       = document.getElementById('notaPago').value.trim();
   if (!archivador) { toast('Ingresa el archivador', 'err'); return; }
   if (!validar(nota)) { toast('Formato inválido. Usa: 100-150', 'err'); return; }
-
   const btn = document.getElementById('btnGuardar');
   btn.disabled = true; btn.textContent = '⏳ Guardando...';
-
   const [ini, fin] = nota.split('-').map(Number);
   const payload = {
+    user_id: currentUserId,                 // ← GUARDAR DUEÑO DEL REGISTRO
     archivador,
-    tipo_archivador: tipoArchivador || null,
+    tipo_archivador: tipo || null,
     nota_pago_inicio: ini,
     nota_pago_fin: fin,
     nota_pago_rango: nota,
@@ -1456,789 +715,355 @@ async function guardar() {
     ...(anio && anio >= 2000 ? { anio: parseInt(anio) } : {}),
     ...(imagenBase64 ? { imagen_url: imagenBase64 } : {})
   };
-
   const { error } = await db.from('registro_folios_v3').insert([payload]);
-  if (error) { toast('Error: ' + error.message, 'err'); }
+  if (error) toast('Error: ' + error.message, 'err');
   else { toast('✅ Registro guardado'); resetForm(); cargar(); }
-
   btn.disabled = false; btn.textContent = '💾 Guardar Registro';
 }
 
-/* ---- RESET FORM ---- */
 function resetForm() {
-  ['anio','tipoArchivador','archivador','notaPago'].forEach(id => document.getElementById(id).value = '');
+  ['anio', 'tipoArchivador', 'archivador', 'notaPago'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('formTitle').textContent = '➕ Nuevo Registro';
   editId = null;
   eliminarImagenPrevisualizacion();
 }
 
-/* ---- MODAL EDITAR ---- */
 function abrirEditar(id) {
-  const r = todos.find(x => x.id === id);
-  if (!r) return;
+  const r = todos.find(x => x.id === id); if (!r) return;
   editId = id;
-  document.getElementById('eAnio').value = r.anio || '';
+  document.getElementById('eAnio').value         = r.anio || '';
   document.getElementById('eTipoArchivador').value = r.tipo_archivador || '';
-  document.getElementById('eArchivador').value = r.archivador;
-  document.getElementById('eNota').value = r.nota_pago_rango;
-  
-  // Manejo de imagen en edición
+  document.getElementById('eArchivador').value   = r.archivador;
+  document.getElementById('eNota').value         = r.nota_pago_rango;
   registroEditandoImagenActual = r.imagen_url || null;
   resetearImagenEdicion();
-  
   if (r.imagen_url) {
     document.getElementById('editImagenActualImg').src = r.imagen_url;
     document.getElementById('editImageActual').style.display = 'block';
-  } else {
-    document.getElementById('editImageActual').style.display = 'none';
   }
-  
   document.getElementById('modalBg').classList.add('open');
 }
 
 function cerrarModal() {
   document.getElementById('modalBg').classList.remove('open');
-  editId = null;
-  resetearImagenEdicion();
-  registroEditandoImagenActual = null;
+  editId = null; resetearImagenEdicion(); registroEditandoImagenActual = null;
 }
 
 async function actualizar() {
-  const anio = document.getElementById('eAnio').value.trim();
-  const tipoArchivador = document.getElementById('eTipoArchivador').value.trim();
+  if (!requireUser() || !editId) return;
+  /* Verificar que el registro pertenece al usuario actual */
+  const reg = todos.find(x => x.id === editId);
+  if (!reg || reg.user_id !== currentUserId) { toast('No tienes permiso para editar este registro', 'err'); return; }
+  const anio       = document.getElementById('eAnio').value.trim();
+  const tipo       = document.getElementById('eTipoArchivador').value.trim();
   const archivador = document.getElementById('eArchivador').value.trim();
-  const nota = document.getElementById('eNota').value.trim();
-
-  if (!archivador) { toast('Ingresa el archivador', 'err'); return; }
-  if (!validar(nota)) { toast('Formato inválido. Usa: 100-150', 'err'); return; }
-
+  const nota       = document.getElementById('eNota').value.trim();
+  if (!archivador || !validar(nota)) { toast('Datos inválidos', 'err'); return; }
   const [ini, fin] = nota.split('-').map(Number);
   const payload = {
-    archivador,
-    tipo_archivador: tipoArchivador || null,
-    nota_pago_inicio: ini,
-    nota_pago_fin: fin,
-    nota_pago_rango: nota,
-    cantidad_notas: fin - ini + 1,
+    archivador, tipo_archivador: tipo || null,
+    nota_pago_inicio: ini, nota_pago_fin: fin,
+    nota_pago_rango: nota, cantidad_notas: fin - ini + 1,
     anio: (anio && anio >= 2000) ? parseInt(anio) : null
   };
-
-  // Manejo de imagen en actualización
-  if (eliminarImagenEnEdicion) {
-    payload.imagen_url = null;
-  } else if (imagenEdicionBase64) {
-    payload.imagen_url = imagenEdicionBase64;
-  }
-  // Si no hay nueva imagen y no se marcó para eliminar, se mantiene la actual
-
-  const { error } = await db.from('registro_folios_v3').update(payload).eq('id', editId);
-  if (error) { toast('Error: ' + error.message, 'err'); }
-  else { toast('✅ Registro actualizado'); cerrarModal(); cargar(); }
+  if (eliminarImagenEnEdicion) payload.imagen_url = null;
+  else if (imagenEdicionBase64) payload.imagen_url = imagenEdicionBase64;
+  /* Filtramos por id Y user_id para seguridad extra */
+  const { error } = await db.from('registro_folios_v3').update(payload).eq('id', editId).eq('user_id', currentUserId);
+  if (error) toast('Error: ' + error.message, 'err');
+  else { toast('✅ Actualizado'); cerrarModal(); cargar(); }
 }
 
-/* ---- ELIMINAR ---- */
 async function eliminar(id) {
+  if (!requireUser()) return;
   if (!confirm('¿Eliminar este registro?')) return;
-  const { error } = await db.from('registro_folios_v3').delete().eq('id', id);
-  if (error) { toast('Error al eliminar', 'err'); }
-  else { toast('🗑️ Registro eliminado'); cargar(); }
+  /* Filtramos por id Y user_id para que nadie borre lo ajeno */
+  const { error } = await db.from('registro_folios_v3').delete().eq('id', id).eq('user_id', currentUserId);
+  if (error) toast('Error al eliminar', 'err');
+  else { toast('🗑️ Eliminado'); cargar(); }
 }
 
-/* ---- VER IMAGEN GRANDE ---- */
 function verImagenGrande(url, id) {
-  imagenActualUrl = url;
-  imagenActualId = id;
+  imagenActualUrl = url; imagenActualId = id;
   document.getElementById('modalImagenGrande').src = url;
   document.getElementById('modalImagenBg').classList.add('open');
 }
+function cerrarModalImagen() { document.getElementById('modalImagenBg').classList.remove('open'); }
+function descargarImagen() { if (imagenActualUrl) { const a = document.createElement('a'); a.href = imagenActualUrl; a.download = `imagen_${imagenActualId}.jpg`; a.click(); } }
 
-function cerrarModalImagen() {
-  document.getElementById('modalImagenBg').classList.remove('open');
-  imagenActualId = null;
-  imagenActualUrl = null;
+/* ════════════════════════════════════════════
+   EXCEL LECTOR
+════════════════════════════════════════════ */
+let workbook = null; let currentData = []; let currentHeaders = [];
+const dropZone  = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+dropZone.addEventListener('click',     () => fileInput.click());
+dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop',      e => { e.preventDefault(); dropZone.classList.remove('dragover'); if (e.dataTransfer.files[0]) procesarArchivo(e.dataTransfer.files[0]); });
+
+function leerArchivo(input) { if (input.files[0]) procesarArchivo(input.files[0]); }
+function procesarArchivo(file) {
+  const r = new FileReader();
+  r.onload = e => {
+    workbook = XLSX.read(e.target.result, { type: 'array' });
+    document.getElementById('fileName').textContent   = file.name;
+    document.getElementById('sheetCount').textContent = workbook.SheetNames.length;
+    document.getElementById('excelOutput').style.display = 'block';
+    document.querySelector('.excel-info').style.display  = 'flex';
+    document.querySelector('.drop-zone').style.display   = 'none';
+    const tabsEl = document.getElementById('sheetTabs');
+    tabsEl.innerHTML = workbook.SheetNames.map((n, i) => `<button class="sheet-tab ${i===0?'active':''}" onclick="verHoja('${n}', this)">${n}</button>`).join('');
+    verHoja(workbook.SheetNames[0], tabsEl.querySelector('.sheet-tab'));
+  };
+  r.readAsArrayBuffer(file);
+}
+function verHoja(nombre, btn) {
+  document.querySelectorAll('.sheet-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const hoja  = workbook.Sheets[nombre];
+  const datos = XLSX.utils.sheet_to_json(hoja, { header: 1, defval: '' });
+  if (!datos.length) { document.getElementById('excelTable').innerHTML = '<tr><td style="padding:2rem;color:var(--text3)">Hoja vacía</td></tr>'; datosExcelParaImportar = []; return; }
+  currentHeaders = datos[0]; currentData = datos.slice(1);
+  datosExcelParaImportar = currentData.map(f => { const o = {}; currentHeaders.forEach((h, i) => o[h] = f[i] || ''); return o; });
+  document.getElementById('rowCount').textContent = currentData.length;
+  document.getElementById('colCount').textContent = currentHeaders.length;
+  let html = '<thead><tr>'; currentHeaders.forEach(h => html += `<th>${h||'—'}</th>`); html += '</tr></thead><tbody>';
+  currentData.forEach(f => { html += '<tr>'; f.forEach(c => html += `<td>${c!==undefined&&c!==''?c:'—'}</td>`); html += '</tr>'; }); html += '</tbody>';
+  document.getElementById('excelTable').innerHTML = html;
+}
+function exportarExcelImportado() {
+  if (!currentData.length) { toast('No hay datos', 'err'); return; }
+  const filas = currentData.map(f => { const o = {}; currentHeaders.forEach((h, i) => o[h] = f[i] || ''); return o; });
+  const ws = XLSX.utils.json_to_sheet(filas); const wb2 = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb2, ws, 'Datos');
+  XLSX.writeFile(wb2, `importado_${new Date().toISOString().slice(0,10)}.xlsx`); toast('✅ Exportado');
 }
 
-function descargarImagen() {
-  if (imagenActualUrl) {
-    const link = document.createElement('a');
-    link.href = imagenActualUrl;
-    link.download = `imagen_${imagenActualId}.jpg`;
-    link.click();
-    toast('📥 Descargando imagen...');
+/* ── Importar a Supabase con user_id ── */
+async function importarABaseDeDatos() {
+  if (!requireUser()) return;
+  if (!datosExcelParaImportar.length) { toast('No hay datos para importar', 'err'); return; }
+  if (!confirm(`¿Importar ${datosExcelParaImportar.length} registros a tu cuenta?`)) return;
+  const btn = event.target; const orig = btn.innerHTML; btn.disabled = true; btn.innerHTML = '⏳ Importando...';
+  let ok = 0, err = 0;
+  for (const fila of datosExcelParaImportar) {
+    try {
+      const anio       = parseInt(fila.AÑO || fila.año || fila.Ano || 0) || null;
+      const tipo       = fila['TIPO ARCHIVADOR'] || fila.tipo_archivador || '';
+      const archivador = String(fila.ARCHIVADOR || fila.archivador || '').trim();
+      const rango      = fila['NOTA DE PAGO'] || fila.nota_pago_rango || '';
+      const inicio     = parseInt(fila['NOTA INICIO'] || fila.nota_pago_inicio || 0) || 0;
+      const fin        = parseInt(fila['NOTA FIN'] || fila.nota_pago_fin || 0) || 0;
+      const cant       = parseInt(fila['CANTIDAD NOTAS'] || fila.cantidad_notas || 0) || 0;
+      if (!archivador) { err++; continue; }
+      const payload = {
+        user_id: currentUserId,             // ← ASIGNAR AL USUARIO ACTUAL
+        anio, tipo_archivador: tipo, archivador,
+        nota_pago_rango: rango, nota_pago_inicio: inicio,
+        nota_pago_fin: fin, cantidad_notas: cant, imagen_url: null
+      };
+      const { error } = await db.from('registro_folios_v3').insert([payload]);
+      if (error) err++; else ok++;
+    } catch { err++; }
   }
+  btn.disabled = false; btn.innerHTML = orig;
+  toast(`✅ ${ok} importados${err > 0 ? ` ❌ ${err} errores` : ''}`, ok > 0 ? 'ok' : 'err');
+  if (ok > 0) cargar();
 }
 
-/* ---- EXPORTAR EXCEL ---- */
-function exportarExcel() {
-  const q = document.getElementById('busqueda').value.toLowerCase();
-  const datos = q ? todos.filter(r =>
-    (r.anio && r.anio.toString().includes(q)) ||
-    (r.tipo_archivador && r.tipo_archivador.toLowerCase().includes(q)) ||
-    r.archivador.toLowerCase().includes(q) ||
-    r.nota_pago_rango.includes(q)
-  ) : todos;
-
-  if (!datos.length) { toast('No hay datos para exportar', 'err'); return; }
-
-  const filas = datos.map(r => ({
-    'Año': r.anio || '',
-    'Tipo Archivador': r.tipo_archivador || '',
-    'Archivador': r.archivador,
-    'Nota de Pago': r.nota_pago_rango,
-    'Nota Inicio': r.nota_pago_inicio,
-    'Nota Fin': r.nota_pago_fin,
-    'Cantidad Notas': r.cantidad_notas,
-    'Tiene Imagen': r.imagen_url ? 'Sí' : 'No'
-  }));
-
-  const ws = XLSX.utils.json_to_sheet(filas);
-  ws['!cols'] = [
-    { wch: 10 }, { wch: 25 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 18 }, { wch: 12 }
-  ];
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Folios');
-  XLSX.writeFile(wb, `folios_${new Date().toISOString().slice(0,10)}.xlsx`);
-  toast('✅ Excel exportado');
+function limpiarVistaExcel() {
+  if (!confirm('¿Cerrar archivo y limpiar vista?')) return;
+  datosExcelParaImportar = []; workbook = null; currentData = []; currentHeaders = [];
+  document.getElementById('fileInput').value = '';
+  ['fileName','sheetCount','rowCount','colCount'].forEach(id => document.getElementById(id).textContent = '—');
+  document.getElementById('sheetTabs').innerHTML = '';
+  document.getElementById('excelTable').innerHTML = '';
+  document.querySelector('.excel-info').style.display = 'none';
+  document.querySelector('.drop-zone').style.display  = 'block';
+  document.getElementById('excelOutput').style.display = 'none';
+  toast('📁 Archivo cerrado');
 }
 
-/* ---- GALERÍA ---- */
-async function cargarGaleria() {
-  const { data, error } = await db
-    .from('registro_folios_v3')
-    .select('id, archivador, tipo_archivador, anio, nota_pago_rango, imagen_url')
-    .not('imagen_url', 'is', null)
-    .order('created_at', { ascending: false });
-  if (error) { toast('Error al cargar galería', 'err'); return; }
-  renderGaleria(data || []);
-}
-
-function renderGaleria(items) {
-  const container = document.getElementById('galeriaLista');
-  if (!items.length) {
-    container.innerHTML = '<div style="text-align:center; padding:2rem; color:var(--text3);">No hay imágenes en la galería</div>';
-    return;
-  }
-  container.innerHTML = items.map(item => `
-    <div style="background: var(--surface2); border-radius: var(--radius); padding: 1rem; text-align: center;">
-      <img src="${item.imagen_url}" style="width: 100%; height: 150px; object-fit: cover; border-radius: var(--radius); cursor: pointer;" onclick="verImagenGrande('${item.imagen_url}', ${item.id})" />
-      <div style="margin-top: 0.5rem;">
-        <div style="font-weight: 600;">${item.archivador}</div>
-        <div style="font-size: 0.7rem; color: var(--text3);">${item.tipo_archivador || 'Sin tipo'} | ${item.nota_pago_rango} | ${item.anio || 'Sin año'}</div>
-        <button class="btn btn-ghost" onclick="verHistorialItem(${item.id})" style="width: auto; margin-top: 0.5rem; padding: 0.3rem 0.8rem;">Ver detalles</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function filtrarGaleria() {
-  const q = document.getElementById('galeriaBusqueda').value.toLowerCase();
-  cargarGaleriaConFiltro(q);
-}
-
-async function cargarGaleriaConFiltro(filtro) {
-  let query = db.from('registro_folios_v3')
-    .select('id, archivador, tipo_archivador, anio, nota_pago_rango, imagen_url')
-    .not('imagen_url', 'is', null);
-  if (filtro) query = query.ilike('archivador', `%${filtro}%`);
-  const { data, error } = await query.order('created_at', { ascending: false });
-  if (error) { toast('Error al cargar galería', 'err'); return; }
-  renderGaleria(data || []);
-}
-
-/* ---- HISTORIAL ---- */
+/* ════════════════════════════════════════════
+   HISTORIAL — filtrado por user_id
+════════════════════════════════════════════ */
 async function cargarHistorial() {
+  if (!requireUser()) return;
   const { data, error } = await db
     .from('registro_folios_v3')
     .select('*')
+    .eq('user_id', currentUserId)
     .order('created_at', { ascending: false })
-    .limit(50);
-  if (error) { toast('Error al cargar historial', 'err'); return; }
+    .limit(100);
+  if (error) return;
   historial = data || [];
   renderHistorial(historial);
 }
 
 function renderHistorial(items) {
-  const container = document.getElementById('historialLista');
-  if (!items.length) {
-    container.innerHTML = '<div style="text-align:center; padding:2rem; color:var(--text3);">No hay registros en el historial</div>';
-    return;
-  }
-  container.innerHTML = items.map(item => `
+  const c = document.getElementById('historialLista');
+  if (!items.length) { c.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text3)">Sin registros</div>'; return; }
+  c.innerHTML = items.map(i => `
     <div class="historia-item">
-      <div class="historia-fecha">📅 ${new Date(item.created_at).toLocaleString()}</div>
+      <div class="historia-fecha">📅 ${new Date(i.created_at).toLocaleString('es-PE')}</div>
       <div class="historia-campos">
-        <div class="campo-cambiado"> ${item.archivador}</div>
-        <div class="campo-cambiado">🏷️ ${item.tipo_archivador || 'Sin tipo'}</div>
-        <div class="campo-cambiado">📄 ${item.nota_pago_rango}</div>
-        <div class="campo-cambiado">📊 ${item.cantidad_notas} notas</div>
-        <div class="campo-cambiado">${item.imagen_url ? '🖼️ Con imagen' : '📷 Sin imagen'}</div>
+        <div class="campo-cambiado">${i.archivador}</div>
+        <div class="campo-cambiado">🏷️ ${i.tipo_archivador || '—'}</div>
+        <div class="campo-cambiado">📄 ${i.nota_pago_rango}</div>
+        <div class="campo-cambiado">📊 ${i.cantidad_notas} notas</div>
       </div>
-      <div style="margin-top: 0.5rem;">
-        <button class="btn btn-ghost" onclick="verHistorialItem(${item.id})" style="width: auto; padding: 0.3rem 0.8rem;">Ver detalles</button>
-      </div>
-    </div>
-  `).join('');
+      <button class="btn btn-ghost" onclick="verHistorialItem(${i.id})" style="width:auto;margin-top:0.5rem;padding:0.3rem 0.8rem;">Ver detalles</button>
+    </div>`).join('');
 }
 
 function filtrarHistorial() {
   const q = document.getElementById('historialBusqueda').value.toLowerCase();
-  const filtrados = historial.filter(item =>
-    item.archivador.toLowerCase().includes(q) ||
-    (item.tipo_archivador && item.tipo_archivador.toLowerCase().includes(q)) ||
-    (item.nota_pago_rango && item.nota_pago_rango.includes(q))
-  );
-  renderHistorial(filtrados);
+  renderHistorial(historial.filter(i =>
+    i.archivador.toLowerCase().includes(q) ||
+    (i.tipo_archivador && i.tipo_archivador.toLowerCase().includes(q)) ||
+    i.nota_pago_rango.includes(q)
+  ));
 }
 
 async function verHistorialItem(id) {
-  const { data, error } = await db.from('registro_folios_v3').select('*').eq('id', id).single();
-  if (error) { toast('Error al cargar detalles', 'err'); return; }
-  verDetalleHistorial(data);
+  /* Solo permitir ver registros del usuario actual */
+  const r = todos.find(x => x.id === id) || historial.find(x => x.id === id);
+  if (!r || r.user_id !== currentUserId) { toast('Sin permiso', 'err'); return; }
+  verDetalleHistorial(r);
 }
 
 function verDetalleHistorial(item) {
-  let modal = document.getElementById('modalHistorialBg');
-  if (!modal) {
-    modal = document.createElement('div');
-    modal.className = 'modal-bg';
-    modal.id = 'modalHistorialBg';
-    modal.innerHTML = `
-      <div class="modal">
-        <h2>📋 Detalle del Registro</h2>
-        <div id="detalleHistorial"></div>
-        <div class="modal-footer">
-          <button class="btn btn-ghost" onclick="cerrarModalHistorial()">Cerrar</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-    modal.addEventListener('click', function(e) { if (e.target === this) cerrarModalHistorial(); });
+  let m = document.getElementById('modalHistorialBg');
+  if (!m) {
+    m = document.createElement('div'); m.className = 'modal-bg'; m.id = 'modalHistorialBg';
+    m.innerHTML = '<div class="modal"><h2>📋 Detalle</h2><div id="detalleHistorial"></div><div class="modal-footer"><button class="btn btn-ghost" onclick="document.getElementById(\'modalHistorialBg\').classList.remove(\'open\')">Cerrar</button></div></div>';
+    document.body.appendChild(m);
+    m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
   }
   document.getElementById('detalleHistorial').innerHTML = `
-    <div style="margin-bottom: 1rem;">
-      <p><strong>📅 Fecha:</strong> ${new Date(item.created_at).toLocaleString()}</p>
-      <p><strong>🏷️ ID:</strong> ${item.id}</p>
-      <p><strong>📁 Archivador:</strong> ${item.archivador}</p>
-      <p><strong>🏷️ Tipo:</strong> ${item.tipo_archivador || 'No especificado'}</p>
-      <p><strong>📄 Rango de notas:</strong> ${item.nota_pago_rango}</p>
-      <p><strong>📊 Cantidad de notas:</strong> ${item.cantidad_notas}</p>
-      <p><strong>📅 Año:</strong> ${item.anio || 'No especificado'}</p>
-      ${item.imagen_url ? `<p><strong>🖼️ Imagen:</strong> <a href="${item.imagen_url}" target="_blank">Ver imagen</a></p>` : ''}
-    </div>
-  `;
-  document.getElementById('modalHistorialBg').classList.add('open');
+    <p><strong>📅 Fecha:</strong> ${new Date(item.created_at).toLocaleString('es-PE')}</p>
+    <p><strong>📁 Archivador:</strong> ${item.archivador}</p>
+    <p><strong>🏷️ Tipo:</strong> ${item.tipo_archivador || '—'}</p>
+    <p><strong>📄 Rango:</strong> ${item.nota_pago_rango}</p>
+    <p><strong>📊 Cant:</strong> ${item.cantidad_notas}</p>
+    <p><strong>📅 Año:</strong> ${item.anio || '—'}</p>`;
+  m.classList.add('open');
 }
 
-function cerrarModalHistorial() {
-  const modal = document.getElementById('modalHistorialBg');
-  if (modal) modal.classList.remove('open');
-}
-
-/* ---- EXCEL READER ---- */
-let workbook = null;
-let currentData = [];
-let currentHeaders = [];
-
-const dropZone = document.getElementById('dropZone');
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-dropZone.addEventListener('drop', e => {
-  e.preventDefault();
-  dropZone.classList.remove('dragover');
-  const file = e.dataTransfer.files[0];
-  if (file) procesarArchivo(file);
-});
-
-function leerArchivo(input) { if (input.files[0]) procesarArchivo(input.files[0]); }
-
-function procesarArchivo(file) {
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    workbook = XLSX.read(e.target.result, { type: 'array' });
-    document.getElementById('fileName').textContent = file.name;
-    document.getElementById('sheetCount').textContent = workbook.SheetNames.length;
-    document.getElementById('excelOutput').style.display = 'block';
-    const tabsEl = document.getElementById('sheetTabs');
-    tabsEl.innerHTML = workbook.SheetNames.map((name, i) =>
-      `<button class="sheet-tab ${i === 0 ? 'active' : ''}" onclick="verHoja('${name}', this)">${name}</button>`
-    ).join('');
-    verHoja(workbook.SheetNames[0], tabsEl.querySelector('.sheet-tab'));
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-function verHoja(nombre, btn) {
-  document.querySelectorAll('.sheet-tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  const hoja = workbook.Sheets[nombre];
-  const datos = XLSX.utils.sheet_to_json(hoja, { header: 1, defval: '' });
-  if (!datos.length) {
-    document.getElementById('excelTable').innerHTML = '<tr><td style="padding:2rem;color:var(--text3)">Hoja vacía</td></tr>';
-    document.getElementById('rowCount').textContent = 0;
-    document.getElementById('colCount').textContent = 0;
-    return;
-  }
-  currentHeaders = datos[0];
-  currentData = datos.slice(1);
-  document.getElementById('rowCount').textContent = currentData.length;
-  document.getElementById('colCount').textContent = currentHeaders.length;
-  let html = '<thead><tr>';
-  currentHeaders.forEach(h => html += `<th>${h || '—'}</th>`);
-  html += '</tr></thead><tbody>';
-  currentData.forEach(fila => {
-    html += '<tr>';
-    fila.forEach(celda => html += `<td>${celda !== undefined && celda !== '' ? celda : '—'}</td>`);
-    html += '</tr>';
-  });
-  html += '</tbody>';
-  document.getElementById('excelTable').innerHTML = html;
-}
-
-function exportarExcelImportado() {
-  if (!currentData.length) { toast('No hay datos para exportar', 'err'); return; }
-  const filas = currentData.map(fila => {
-    const obj = {};
-    currentHeaders.forEach((header, idx) => { obj[header] = fila[idx] || ''; });
-    return obj;
-  });
-  const ws = XLSX.utils.json_to_sheet(filas);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Datos_Importados');
-  XLSX.writeFile(wb, `importado_${new Date().toISOString().slice(0,10)}.xlsx`);
-  toast('✅ Excel exportado');
-}
-
-function copiarExcelComoJSON() {
-  if (!currentData.length) { toast('No hay datos para copiar', 'err'); return; }
-  const filas = currentData.map(fila => {
-    const obj = {};
-    currentHeaders.forEach((header, idx) => { obj[header] = fila[idx] || ''; });
-    return obj;
-  });
-  navigator.clipboard.writeText(JSON.stringify(filas, null, 2));
-  toast('✅ JSON copiado al portapapeles');
-}
-
-/* ════════════════════════════════════════════════════════════════
-   CHATBOT CON GROQ IA — LÓGICA PRINCIPAL
-   ════════════════════════════════════════════════════════════════ */
-
-function toggleChat() {
-  document.getElementById('chatWindow').classList.toggle('open');
-}
-
-function limpiarChat() {
-  chatHistory = [];
-  const container = document.getElementById('chatMessages');
-  container.innerHTML = `
-    <div class="message bot">
-        <div class="message-avatar">🤖</div>
-        <div class="message-content">Chat reiniciado. ¿En qué puedo ayudarte?</div>
-    </div>`;
-}
-
-function enviarSugerencia(texto) {
-  document.getElementById('chatInput').value = texto;
-  enviarMensaje();
-}
-
-function agregarMensaje(texto, tipo) {
-  const container = document.getElementById('chatMessages');
-  const div = document.createElement('div');
-  div.className = `message ${tipo}`;
-  const avatar = tipo === 'user' ? '👤' : '🤖';
-  div.innerHTML = `
-    <div class="message-avatar">${avatar}</div>
-    <div class="message-content">${texto}</div>
-  `;
-  container.appendChild(div);
-  container.scrollTop = container.scrollHeight;
-  return div;
-}
-
-function mostrarTyping() {
-  const container = document.getElementById('chatMessages');
-  const div = document.createElement('div');
-  div.className = 'message bot';
-  div.id = 'typingIndicator';
-  div.innerHTML = `
-    <div class="message-avatar">🤖</div>
-    <div class="message-content">
-      <div class="typing"><span></span><span></span><span></span></div>
-    </div>
-  `;
-  container.appendChild(div);
-  container.scrollTop = container.scrollHeight;
-}
-
-function ocultarTyping() {
-  const el = document.getElementById('typingIndicator');
-  if (el) el.remove();
-}
-
-/**
- * Obtiene datos de Supabase y construye un contexto resumido para la IA.
- * Se llama en cada mensaje para que la IA siempre tenga datos frescos.
- */
-async function obtenerContextoDatos() {
+/* ════════════════════════════════════════════
+   GALERÍA — filtrado por user_id
+════════════════════════════════════════════ */
+async function cargarGaleria() {
+  if (!requireUser()) return;
   const { data, error } = await db
     .from('registro_folios_v3')
-    .select('id, archivador, tipo_archivador, nota_pago_rango, cantidad_notas, anio, imagen_url, created_at')
+    .select('id, archivador, tipo_archivador, anio, nota_pago_rango, imagen_url')
+    .eq('user_id', currentUserId)
+    .not('imagen_url', 'is', null)
     .order('created_at', { ascending: false });
-
-  if (error || !data) return 'No se pudo obtener información de la base de datos.';
-
-  const totalArchivadores = data.length;
-  const totalNotas = data.reduce((s, r) => s + (r.cantidad_notas || 0), 0);
-  const conImagen = data.filter(r => r.imagen_url).length;
-  const anos = [...new Set(data.map(r => r.anio).filter(Boolean))].sort();
-
-  // Resumen por año
-  const porAno = {};
-  data.forEach(r => {
-    const key = r.anio || 'Sin año';
-    if (!porAno[key]) porAno[key] = { archivadores: 0, notas: 0 };
-    porAno[key].archivadores++;
-    porAno[key].notas += r.cantidad_notas || 0;
-  });
-
-  const resumenAno = Object.entries(porAno)
-    .map(([anio, v]) => `  - ${anio}: ${v.archivadores} archivadores, ${v.notas} notas`)
-    .join('\n');
-
-  // Lista de registros (sin imagen_url para no inflar el prompt)
-  const listaRegistros = data.map(r =>
-    `  ID:${r.id} | Archivador:${r.archivador} | Tipo:${r.tipo_archivador || 'N/A'} | Rango:${r.nota_pago_rango} | Cant:${r.cantidad_notas} | Año:${r.anio || 'N/A'} | Imagen:${r.imagen_url ? 'Sí' : 'No'} | Fecha:${new Date(r.created_at).toLocaleDateString('es-PE')}`
-  ).join('\n');
-
-  return `
-=== DATOS ACTUALES DEL SISTEMA (obtenidos en tiempo real) ===
-📁 Total archivadores: ${totalArchivadores}
-📄 Total notas de pago: ${totalNotas}
-🖼️ Registros con imagen: ${conImagen}
-📅 Años registrados: ${anos.join(', ') || 'Sin datos'}
-
-📊 RESUMEN POR AÑO:
-${resumenAno}
-
-📋 LISTA COMPLETA DE REGISTROS:
-${listaRegistros || 'Sin registros'}
-=============================================================
-`;
+  if (error) return;
+  renderGaleria(data || []);
 }
 
-/**
- * Llama a la API de Groq con el contexto de datos + historial de conversación.
- */
-async function llamarGroq(preguntaUsuario, contexto) {
-  const systemPrompt = `Eres un asistente inteligente especializado en el sistema "Muni Folio" de registro de archivadores y notas de pago de una municipalidad peruana. 
-Eres amable, preciso y respondes siempre en español.
-Tienes acceso en tiempo real a los datos de la base de datos (proporcionados en cada mensaje).
-Responde de forma clara y concisa. Usa emojis para mejorar la legibilidad.
-Cuando muestres listas de registros, usa formato de lista con viñetas.
-Puedes hacer cálculos, filtrar, buscar y analizar los datos que se te proporcionan.
-Si no hay datos suficientes para responder algo, dilo claramente.
-NO inventes datos que no estén en el contexto proporcionado.`;
-
-  // Construir mensajes con historial + nuevo mensaje con contexto
-  const mensajes = [
-    ...chatHistory,
-    {
-      role: 'user',
-      content: `${contexto}\n\nPregunta del usuario: ${preguntaUsuario}`
-    }
-  ];
-
-  const response = await fetch(GROQ_URL, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${GROQ_API_KEY}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: GROQ_MODEL,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        ...mensajes
-      ],
-      max_tokens: 1024,
-      temperature: 0.4
-    })
-  });
-
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error(err.error?.message || `Error HTTP ${response.status}`);
-  }
-
-  const data = await response.json();
-  return data.choices?.[0]?.message?.content || '⚠️ No obtuve respuesta del modelo.';
+function renderGaleria(items) {
+  const c = document.getElementById('galeriaLista');
+  if (!items.length) { c.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text3)">Sin imágenes</div>'; return; }
+  c.innerHTML = items.map(i => `
+    <div style="background:var(--surface2);border-radius:var(--radius);padding:1rem;text-align:center;">
+      <img src="${i.imagen_url}" style="width:100%;height:150px;object-fit:cover;border-radius:var(--radius);cursor:pointer;" onclick="verImagenGrande('${i.imagen_url}', ${i.id})" />
+      <div style="margin-top:0.5rem;"><div style="font-weight:600;">${i.archivador}</div>
+      <div style="font-size:0.7rem;color:var(--text3);">${i.tipo_archivador || '—'} | ${i.nota_pago_rango} | ${i.anio || '—'}</div></div>
+    </div>`).join('');
 }
 
-/**
- * Función principal: envía el mensaje del usuario.
- */
-async function enviarMensaje() {
-  const input = document.getElementById('chatInput');
-  const sendBtn = document.getElementById('chatSendBtn');
-  const pregunta = input.value.trim();
-  if (!pregunta) return;
-
-  // UI: mostrar mensaje del usuario
-  agregarMensaje(pregunta, 'user');
-  input.value = '';
-  input.disabled = true;
-  sendBtn.disabled = true;
-  mostrarTyping();
-
-  try {
-    // 1. Obtener datos frescos de Supabase
-    const contexto = await obtenerContextoDatos();
-
-    // 2. Llamar a Groq con contexto + pregunta
-    const respuesta = await llamarGroq(pregunta, contexto);
-
-    // 3. Actualizar historial de conversación (sin el contexto, solo pregunta/respuesta)
-    chatHistory.push({ role: 'user', content: pregunta });
-    chatHistory.push({ role: 'assistant', content: respuesta });
-
-    // Limitar historial a últimos 10 turnos para no exceder tokens
-    if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
-
-    // 4. Mostrar respuesta
-    ocultarTyping();
-    agregarMensaje(respuesta, 'bot');
-
-  } catch (error) {
-    ocultarTyping();
-    console.error('Error Groq:', error);
-    agregarMensaje(`❌ Error al conectar con Groq AI: ${error.message}\n\nVerifica que la API key sea válida.`, 'bot');
-  } finally {
-    input.disabled = false;
-    sendBtn.disabled = false;
-    input.focus();
-  }
+function filtrarGaleria() {
+  const q = document.getElementById('galeriaBusqueda').value.toLowerCase();
+  if (!q) { cargarGaleria(); return; }
+  const filtrados = todos.filter(r => r.imagen_url && r.archivador.toLowerCase().includes(q));
+  renderGaleria(filtrados);
 }
 
-/* ---- MODALES CLICK AFUERA ---- */
-document.getElementById('modalBg').addEventListener('click', function(e) {
-  if (e.target === this) cerrarModal();
-});
-document.getElementById('modalImagenBg').addEventListener('click', function(e) {
-  if (e.target === this) cerrarModalImagen();
-});
-
-/* ════════════════════════════════════════════════════════════════
-   GRÁFICOS — Chart.js
-   ════════════════════════════════════════════════════════════════ */
-
-// Paleta coherente con el diseño oscuro
-const PALETTE = [
-  '#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444',
-  '#06b6d4','#f97316','#84cc16','#ec4899','#6366f1'
-];
-
+/* ════════════════════════════════════════════
+   GRÁFICOS — filtrado por user_id
+════════════════════════════════════════════ */
+const PALETTE = ['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4','#f97316','#84cc16','#ec4899','#6366f1'];
 let chartInstances = {};
-
-function destroyChart(id) {
-  if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
-}
-
-const chartDefaults = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'DM Sans', size: 11 } } } },
-};
-
-function makeScales() {
-  return {
-    x: { ticks: { color: '#475569', font: { family: 'DM Mono', size: 11 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
-    y: { ticks: { color: '#475569', font: { family: 'DM Mono', size: 11 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
-  };
-}
+function destroyChart(id) { if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; } }
+const chartDefaults = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'DM Sans', size: 11 } } } } };
+function makeScales() { return { x: { ticks: { color:'#475569', font:{family:'DM Mono',size:11} }, grid:{color:'rgba(255,255,255,0.05)'} }, y: { ticks:{color:'#475569',font:{family:'DM Mono',size:11}}, grid:{color:'rgba(255,255,255,0.05)'} } }; }
 
 async function cargarGraficos() {
+  if (!requireUser()) return;
   const { data, error } = await db
     .from('registro_folios_v3')
-    .select('id, archivador, tipo_archivador, nota_pago_rango, cantidad_notas, anio, imagen_url, created_at')
+    .select('id,archivador,tipo_archivador,nota_pago_rango,cantidad_notas,anio,imagen_url,created_at')
+    .eq('user_id', currentUserId)
     .order('created_at', { ascending: true });
-
-  if (error || !data || !data.length) {
-    toast('No hay datos para graficar', 'err');
-    return;
-  }
-
-  // ── KPIs ──────────────────────────────────────────────────────
+  if (error || !data || !data.length) { toast('No hay datos', 'err'); return; }
   const totalArch = data.length;
-  const totalNotas = data.reduce((s, r) => s + (r.cantidad_notas || 0), 0);
-  const conImg = data.filter(r => r.imagen_url).length;
-  const anos = [...new Set(data.map(r => r.anio).filter(Boolean))];
-  const promedio = (totalNotas / totalArch).toFixed(1);
-
+  const totalNotas = data.reduce((s,r)=>s+(r.cantidad_notas||0),0);
+  const conImg = data.filter(r=>r.imagen_url).length;
+  const anos = [...new Set(data.map(r=>r.anio).filter(Boolean))];
   document.getElementById('kpiRow').innerHTML = [
-    { icon: '📁', label: 'Archivadores', val: totalArch, color: '#3b82f6' },
-    { icon: '📄', label: 'Total notas', val: totalNotas.toLocaleString(), color: '#10b981' },
-    { icon: '📊', label: 'Promedio notas', val: promedio, color: '#f59e0b' },
-    { icon: '🖼️', label: 'Con imagen', val: conImg, color: '#8b5cf6' },
-    { icon: '📅', label: 'Años activos', val: anos.length || '—', color: '#06b6d4' },
-  ].map(k => `
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0.8rem 1rem;display:flex;flex-direction:column;gap:3px;">
-      <span style="font-size:1.1rem;">${k.icon}</span>
-      <span style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:${k.color};line-height:1;">${k.val}</span>
-      <span style="font-size:0.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">${k.label}</span>
-    </div>
-  `).join('');
-
-  // ── 1. BARRAS: notas por año ──────────────────────────────────
-  const porAnio = {};
-  data.forEach(r => {
-    const k = r.anio || 'S/Año';
-    porAnio[k] = (porAnio[k] || 0) + (r.cantidad_notas || 0);
-  });
-  const anioLabels = Object.keys(porAnio).sort();
-  destroyChart('chartAnio');
-  chartInstances['chartAnio'] = new Chart(document.getElementById('chartAnio'), {
-    type: 'bar',
-    data: {
-      labels: anioLabels,
-      datasets: [{
-        label: 'Notas de pago',
-        data: anioLabels.map(k => porAnio[k]),
-        backgroundColor: anioLabels.map((_, i) => PALETTE[i % PALETTE.length] + 'cc'),
-        borderColor: anioLabels.map((_, i) => PALETTE[i % PALETTE.length]),
-        borderWidth: 1.5,
-        borderRadius: 6,
-      }]
-    },
-    options: {
-      ...chartDefaults,
-      plugins: { ...chartDefaults.plugins, legend: { display: false } },
-      scales: makeScales()
-    }
-  });
-
-  // ── 2. DONUT: top 8 archivadores ─────────────────────────────
-  const porArch = {};
-  data.forEach(r => { porArch[r.archivador] = (porArch[r.archivador] || 0) + (r.cantidad_notas || 0); });
-  const topArch = Object.entries(porArch).sort((a,b) => b[1]-a[1]).slice(0,8);
-  destroyChart('chartDonut');
-  chartInstances['chartDonut'] = new Chart(document.getElementById('chartDonut'), {
-    type: 'doughnut',
-    data: {
-      labels: topArch.map(e => e[0]),
-      datasets: [{
-        data: topArch.map(e => e[1]),
-        backgroundColor: PALETTE.map(c => c + 'cc'),
-        borderColor: PALETTE,
-        borderWidth: 1.5,
-        hoverOffset: 6
-      }]
-    },
-    options: {
-      ...chartDefaults,
-      cutout: '60%',
-      plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { family: 'DM Sans', size: 11 }, boxWidth: 12, padding: 10 } } }
-    }
-  });
-
-  // ── 3. LÍNEA: registros acumulados por mes ────────────────────
-  const porMes = {};
-  data.forEach(r => {
-    const d = new Date(r.created_at);
-    const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-    porMes[k] = (porMes[k] || 0) + 1;
-  });
-  // Mostrar solo los últimos 10 meses
-  const todosLosMeses = Object.keys(porMes).sort();
-  let acum = 0;
-  const acumTodos = todosLosMeses.map(k => { acum += porMes[k]; return acum; });
-  const mesLabels = todosLosMeses.slice(-10);
-  const acumData  = acumTodos.slice(-10);
-  destroyChart('chartLinea');
-  chartInstances['chartLinea'] = new Chart(document.getElementById('chartLinea'), {
-    type: 'line',
-    data: {
-      labels: mesLabels,
-      datasets: [
-        {
-          label: 'Registros acumulados',
-          data: acumData,
-          borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59,130,246,0.08)',
-          borderWidth: 2,
-          pointBackgroundColor: '#3b82f6',
-          pointRadius: 4,
-          fill: true,
-          tension: 0.4
-        },
-        {
-          label: 'Nuevos ese mes',
-          data: mesLabels.map(k => porMes[k]),
-          borderColor: '#10b981',
-          backgroundColor: 'rgba(16,185,129,0.08)',
-          borderWidth: 2,
-          pointBackgroundColor: '#10b981',
-          pointRadius: 4,
-          fill: true,
-          tension: 0.4
-        }
-      ]
-    },
-    options: { ...chartDefaults, scales: makeScales() }
-  });
-
-  // ── 4. PIE: con/sin imagen ────────────────────────────────────
-  const sinImg = totalArch - conImg;
-  destroyChart('chartImagen');
-  chartInstances['chartImagen'] = new Chart(document.getElementById('chartImagen'), {
-    type: 'pie',
-    data: {
-      labels: ['Con imagen', 'Sin imagen'],
-      datasets: [{
-        data: [conImg, sinImg],
-        backgroundColor: ['rgba(139,92,246,0.7)', 'rgba(71,85,105,0.5)'],
-        borderColor: ['#8b5cf6', '#475569'],
-        borderWidth: 1.5,
-        hoverOffset: 6
-      }]
-    },
-    options: { ...chartDefaults, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: 'DM Sans', size: 12 } } } } }
-  });
-
-  // ── 5. HORIZONTAL BAR: distribución de rangos (pequeño/med/grande) ──
-  const rangos = { 'Pequeño (1-50)': 0, 'Mediano (51-150)': 0, 'Grande (151-500)': 0, 'Muy grande (500+)': 0 };
-  data.forEach(r => {
-    const c = r.cantidad_notas || 0;
-    if (c <= 50) rangos['Pequeño (1-50)']++;
-    else if (c <= 150) rangos['Mediano (51-150)']++;
-    else if (c <= 500) rangos['Grande (151-500)']++;
-    else rangos['Muy grande (500+)']++;
-  });
-  destroyChart('chartRangos');
-  chartInstances['chartRangos'] = new Chart(document.getElementById('chartRangos'), {
-    type: 'bar',
-    data: {
-      labels: Object.keys(rangos),
-      datasets: [{
-        label: 'Archivadores',
-        data: Object.values(rangos),
-        backgroundColor: ['rgba(16,185,129,0.7)','rgba(59,130,246,0.7)','rgba(245,158,11,0.7)','rgba(239,68,68,0.7)'],
-        borderColor: ['#10b981','#3b82f6','#f59e0b','#ef4444'],
-        borderWidth: 1.5,
-        borderRadius: 6,
-      }]
-    },
-    options: {
-      ...chartDefaults,
-      indexAxis: 'y',
-      plugins: { ...chartDefaults.plugins, legend: { display: false } },
-      scales: makeScales()
-    }
-  });
+    {icon:'📁',l:'Mis Archivadores',v:totalArch,c:'#3b82f6'},
+    {icon:'📄',l:'Mis Notas',v:totalNotas.toLocaleString(),c:'#10b981'},
+    {icon:'🖼️',l:'Con imagen',v:conImg,c:'#8b5cf6'},
+    {icon:'📅',l:'Años',v:anos.length,c:'#06b6d4'}
+  ].map(k=>`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0.8rem 1rem;display:flex;flex-direction:column;gap:3px;"><span>${k.icon}</span><span style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:${k.c}">${k.v}</span><span style="font-size:0.65rem;color:var(--text3)">${k.l}</span></div>`).join('');
+  const porAnio={}; data.forEach(r=>{const k=r.anio||'S/Año';porAnio[k]=(porAnio[k]||0)+(r.cantidad_notas||0);});
+  const aL=Object.keys(porAnio).sort();
+  destroyChart('chartAnio'); chartInstances['chartAnio']=new Chart(document.getElementById('chartAnio'),{type:'bar',data:{labels:aL,datasets:[{label:'Notas',data:aL.map(k=>porAnio[k]),backgroundColor:aL.map((_,i)=>PALETTE[i%PALETTE.length]+'cc'),borderColor:aL.map((_,i)=>PALETTE[i%PALETTE.length]),borderWidth:1.5,borderRadius:6}]},options:{...chartDefaults,plugins:{...chartDefaults.plugins,legend:{display:false}},scales:makeScales()}});
+  const porArch={}; data.forEach(r=>porArch[r.archivador]=(porArch[r.archivador]||0)+(r.cantidad_notas||0));
+  const topArch=Object.entries(porArch).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  destroyChart('chartDonut'); chartInstances['chartDonut']=new Chart(document.getElementById('chartDonut'),{type:'doughnut',data:{labels:topArch.map(e=>e[0]),datasets:[{data:topArch.map(e=>e[1]),backgroundColor:PALETTE.map(c=>c+'cc'),borderColor:PALETTE,borderWidth:1.5,hoverOffset:6}]},options:{...chartDefaults,cutout:'60%',plugins:{legend:{position:'right',labels:{color:'#94a3b8',font:{family:'DM Sans',size:11},boxWidth:12,padding:10}}}}});
+  const porMes={}; data.forEach(r=>{const d=new Date(r.created_at);const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;porMes[k]=(porMes[k]||0)+1;});
+  const meses=Object.keys(porMes).sort(); let acum=0; const acumD=meses.map(k=>{acum+=porMes[k];return acum;});
+  destroyChart('chartLinea'); chartInstances['chartLinea']=new Chart(document.getElementById('chartLinea'),{type:'line',data:{labels:meses.slice(-10),datasets:[{label:'Acumulados',data:acumD.slice(-10),borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,0.08)',fill:true,tension:0.4}]},options:{...chartDefaults,scales:makeScales()}});
+  const sinImg=totalArch-conImg;
+  destroyChart('chartImagen'); chartInstances['chartImagen']=new Chart(document.getElementById('chartImagen'),{type:'pie',data:{labels:['Con','Sin'],datasets:[{data:[conImg,sinImg],backgroundColor:['rgba(139,92,246,0.7)','rgba(71,85,105,0.5)'],borderColor:['#8b5cf6','#475569']}]},options:{...chartDefaults,plugins:{legend:{position:'bottom',labels:{color:'#94a3b8'}}}}});
+  const rangos={'1-50':0,'51-150':0,'151-500':0,'500+':0}; data.forEach(r=>{const c=r.cantidad_notas||0;if(c<=50)rangos['1-50']++;else if(c<=150)rangos['51-150']++;else if(c<=500)rangos['151-500']++;else rangos['500+']++;});
+  destroyChart('chartRangos'); chartInstances['chartRangos']=new Chart(document.getElementById('chartRangos'),{type:'bar',data:{labels:Object.keys(rangos),datasets:[{label:'Cant',data:Object.values(rangos),backgroundColor:['rgba(16,185,129,0.7)','rgba(59,130,246,0.7)','rgba(245,158,11,0.7)','rgba(239,68,68,0.7)'],borderRadius:6}]},options:{...chartDefaults,indexAxis:'y',plugins:{legend:{display:false}},scales:makeScales()}});
 }
 
-/* ---- INIT ---- */
-cargar();
+/* ════════════════════════════════════════════
+   CHATBOT (solo datos del usuario actual)
+════════════════════════════════════════════ */
+function toggleChat() { document.getElementById('chatWindow').classList.toggle('open'); }
+function limpiarChat() { chatHistory=[]; document.getElementById('chatMessages').innerHTML='<div class="message bot"><div class="message-avatar">🤖</div><div class="message-content">Chat reiniciado.</div></div>'; }
+function enviarSugerencia(t) { document.getElementById('chatInput').value=t; enviarMensaje(); }
+function agregarMensaje(txt, tipo) { const c=document.getElementById('chatMessages'); const d=document.createElement('div'); d.className=`message ${tipo}`; d.innerHTML=`<div class="message-avatar">${tipo==='user'?'👤':'🤖'}</div><div class="message-content">${txt}</div>`; c.appendChild(d); c.scrollTop=c.scrollHeight; }
+function mostrarTyping() { const c=document.getElementById('chatMessages'); const d=document.createElement('div'); d.className='message bot'; d.id='typingIndicator'; d.innerHTML=`<div class="message-avatar">🤖</div><div class="message-content"><div class="typing"><span></span><span></span><span></span></div></div>`; c.appendChild(d); c.scrollTop=c.scrollHeight; }
+function ocultarTyping() { const e=document.getElementById('typingIndicator'); if(e) e.remove(); }
+
+async function obtenerContextoDatos() {
+  if (!currentUserId) return 'Sin sesión activa.';
+  /* Solo stats del usuario actual (todos ya está filtrado) */
+  return `Mis registros → Total: ${todos.length} archivadores | Notas: ${todos.reduce((s,r)=>s+(r.cantidad_notas||0),0)} | Años: ${[...new Set(todos.map(r=>r.anio).filter(Boolean))].join(', ')||'—'} | Con imagen: ${todos.filter(r=>r.imagen_url).length}`;
+}
+
+async function llamarGroq(pregunta, contexto) {
+  const res = await fetch(GROQ_URL, { method:'POST', headers:{'Authorization':`Bearer ${GROQ_API_KEY}`,'Content-Type':'application/json'}, body:JSON.stringify({model:GROQ_MODEL,messages:[{role:'system',content:'Eres un asistente de folios municipales. Solo tienes acceso a los registros del usuario actual. Responde en español breve y claro.'},{role:'user',content:`${contexto}\n\nPregunta: ${pregunta}`}],max_tokens:512,temperature:0.4}) });
+  const d = await res.json(); return d.choices?.[0]?.message?.content || 'Sin respuesta.';
+}
+
+async function enviarMensaje() {
+  const input=document.getElementById('chatInput'); const q=input.value.trim(); if(!q) return;
+  agregarMensaje(q,'user'); input.value=''; input.disabled=true; document.getElementById('chatSendBtn').disabled=true; mostrarTyping();
+  try {
+    const ctx=await obtenerContextoDatos();
+    const resp=await llamarGroq(q,ctx);
+    chatHistory.push({role:'user',content:q},{role:'assistant',content:resp});
+    if(chatHistory.length>20) chatHistory=chatHistory.slice(-20);
+    ocultarTyping(); agregarMensaje(resp,'bot');
+  } catch(e) { ocultarTyping(); agregarMensaje(`Error: ${e.message}`,'bot'); }
+  finally { input.disabled=false; document.getElementById('chatSendBtn').disabled=false; input.focus(); }
+}
+
+/* ── Cerrar modales al hacer clic fuera ── */
+document.getElementById('modalBg').addEventListener('click', e => { if(e.target===document.getElementById('modalBg')) cerrarModal(); });
+document.getElementById('modalImagenBg').addEventListener('click', e => { if(e.target===document.getElementById('modalImagenBg')) cerrarModalImagen(); });
 </script>
+
 </body>
 </html>
