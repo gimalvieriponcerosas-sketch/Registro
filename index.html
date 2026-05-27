@@ -173,9 +173,43 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     <div id="authForm">
       <div class="field"><label>Correo Electrónico</label><input type="email" id="email" placeholder="usuario@muni.gob.pe" /></div>
       <div class="field"><label>Contraseña</label><input type="password" id="password" placeholder="••••••••" /></div>
+      <a onclick="mostrarRecuperacion()" style="display:block;text-align:right;font-size:0.78rem;color:var(--text3);margin-top:-0.4rem;margin-bottom:1rem;cursor:pointer;transition:color 0.2s;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color=''">¿Olvidaste tu contraseña?</a>
       <button class="btn btn-primary" onclick="handleAuth()" id="authBtn">Iniciar Sesión</button>
     </div>
-    <div class="auth-toggle">
+
+    <!-- PANEL RECUPERAR CONTRASEÑA -->
+    <div id="resetPanel" style="display:none;">
+      <p style="font-size:0.85rem;color:var(--text2);margin-bottom:1.2rem;">Escribe tu correo y te enviaremos un enlace para restablecer tu contraseña.</p>
+      <div class="field" style="text-align:left;">
+        <label>Correo Electrónico</label>
+        <input type="email" id="resetEmail" placeholder="usuario@muni.gob.pe" />
+      </div>
+      <button class="btn btn-primary" onclick="enviarRecuperacion()" id="resetBtn">&#128231; Enviar enlace de recuperación</button>
+      <button class="btn btn-ghost" onclick="volverAlLogin()">&#8592; Volver al inicio de sesión</button>
+      <div id="resetSuccess" style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:10px;padding:1rem;margin-top:1rem;font-size:0.85rem;color:#34d399;display:none;">
+        &#9989; ¡Correo enviado! Revisa tu bandeja de entrada (y spam). El enlace expira en 1 hora.
+      </div>
+    </div>
+
+    <!-- PANEL NUEVA CONTRASEÑA (cuando llega desde el email de recuperación) -->
+    <div id="newPasswordPanel" style="display:none;">
+      <p style="font-size:0.85rem;color:var(--text2);margin-bottom:1.2rem;">Escribe tu nueva contraseña para acceder a tu cuenta.</p>
+      <div class="field" style="text-align:left;">
+        <label>Nueva Contraseña</label>
+        <input type="password" id="newPassword" placeholder="Mínimo 6 caracteres" />
+      </div>
+      <div class="field" style="text-align:left;">
+        <label>Confirmar Contraseña</label>
+        <input type="password" id="confirmPassword" placeholder="Repite la contraseña" />
+      </div>
+      <button class="btn btn-primary" onclick="guardarNuevaContrasena()" id="newPassBtn">🔒 Guardar nueva contraseña</button>
+      <div id="newPassError" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:0.8rem;margin-top:1rem;font-size:0.83rem;color:#f87171;display:none;"></div>
+      <div id="newPassSuccess" style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:10px;padding:0.8rem;margin-top:1rem;font-size:0.83rem;color:#34d399;display:none;">
+        ✅ ¡Contraseña actualizada! Redirigiendo...
+      </div>
+    </div>
+
+    <div class="auth-toggle" id="authToggleRow">
       <span id="authToggleText">¿No tienes cuenta?</span>
       <a onclick="toggleAuthMode()" id="authToggleLink">Regístrate aquí</a>
     </div>
@@ -417,6 +451,21 @@ let currentUserEmail = null;
    AUTENTICACIÓN
 ════════════════════════════════════════════ */
 async function checkSession() {
+  /* ── Detectar si el usuario viene del link de recuperación de contraseña ── */
+  const hash = window.location.hash;
+  const params = new URLSearchParams(hash.replace('#', '?'));
+  const tipo = params.get('type');
+
+  if (tipo === 'recovery') {
+    /* Supabase ya estableció la sesión en el hash — la recogemos */
+    const { data: { session }, error } = await db.auth.getSession();
+    if (session) {
+      /* Mostrar pantalla de nueva contraseña en lugar de la app */
+      mostrarNuevaContrasena();
+      return;
+    }
+  }
+
   const { data: { session } } = await db.auth.getSession();
   if (session) {
     inicializarUsuario(session.user);
@@ -452,10 +501,109 @@ function showApp(email) {
 
 function toggleAuthMode() {
   isLoginMode = !isLoginMode;
-  document.getElementById('authTitle').textContent     = isLoginMode ? 'Bienvenido' : 'Crear Cuenta';
-  document.getElementById('authBtn').textContent       = isLoginMode ? 'Iniciar Sesión' : 'Registrarse';
+  volverAlLogin(); // siempre volver al panel principal al cambiar modo
+  document.getElementById('authTitle').textContent      = isLoginMode ? 'Bienvenido' : 'Crear Cuenta';
+  document.getElementById('authBtn').textContent        = isLoginMode ? 'Iniciar Sesión' : 'Registrarse';
   document.getElementById('authToggleText').textContent = isLoginMode ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?';
   document.getElementById('authToggleLink').textContent = isLoginMode ? 'Regístrate aquí' : 'Inicia Sesión';
+  // Mostrar u ocultar el link de "¿Olvidaste tu contraseña?" solo en login
+  const forgot = document.querySelector('[onclick="mostrarRecuperacion()"]');
+  if (forgot) forgot.style.display = isLoginMode ? 'block' : 'none';
+}
+
+/* ── RECUPERAR CONTRASEÑA ── */
+function mostrarRecuperacion() {
+  document.getElementById('authForm').style.display   = 'none';
+  document.getElementById('resetPanel').style.display = 'block';
+  document.getElementById('authToggleRow').style.display = 'none';
+  document.getElementById('authTitle').textContent    = 'Recuperar Contraseña';
+  document.getElementById('resetEmail').value = document.getElementById('email').value || '';
+  document.getElementById('resetSuccess').style.display = 'none';
+}
+
+function volverAlLogin() {
+  document.getElementById('authForm').style.display      = 'block';
+  document.getElementById('resetPanel').style.display    = 'none';
+  document.getElementById('authToggleRow').style.display = 'block';
+  document.getElementById('authTitle').textContent       = isLoginMode ? 'Bienvenido' : 'Crear Cuenta';
+  document.getElementById('resetSuccess').style.display  = 'none';
+}
+
+async function enviarRecuperacion() {
+  const email = document.getElementById('resetEmail').value.trim();
+  if (!email) { toast('Ingresa tu correo electrónico', 'err'); return; }
+  const btn = document.getElementById('resetBtn');
+  btn.disabled = true; btn.textContent = '⏳ Enviando...';
+  /* redirectTo debe ser la URL exacta de tu app (sin hash) */
+  const redirectUrl = window.location.origin + window.location.pathname;
+  const { error } = await db.auth.resetPasswordForEmail(email, {
+    redirectTo: redirectUrl
+  });
+  btn.disabled = false; btn.textContent = '📧 Enviar enlace de recuperación';
+  if (error) {
+    toast('Error: ' + error.message, 'err');
+  } else {
+    document.getElementById('resetSuccess').style.display = 'block';
+    document.getElementById('resetEmail').value = '';
+    toast('✅ Correo de recuperación enviado', 'ok');
+  }
+}
+
+/* ── PANTALLA NUEVA CONTRASEÑA (retorno desde email) ── */
+function mostrarNuevaContrasena() {
+  document.getElementById('authOverlay').style.display = 'flex';
+  document.getElementById('appContent').style.display  = 'none';
+  document.getElementById('authForm').style.display       = 'none';
+  document.getElementById('resetPanel').style.display     = 'none';
+  document.getElementById('authToggleRow').style.display  = 'none';
+  document.getElementById('newPasswordPanel').style.display = 'block';
+  document.getElementById('authTitle').textContent    = '🔒 Nueva Contraseña';
+  document.getElementById('authSubtitle').textContent = 'Elige una contraseña segura';
+}
+
+async function guardarNuevaContrasena() {
+  const np  = document.getElementById('newPassword').value;
+  const cp  = document.getElementById('confirmPassword').value;
+  const errEl = document.getElementById('newPassError');
+  const okEl  = document.getElementById('newPassSuccess');
+  errEl.style.display = 'none';
+  okEl.style.display  = 'none';
+
+  if (!np || np.length < 6) {
+    errEl.textContent = '⚠️ La contraseña debe tener al menos 6 caracteres.';
+    errEl.style.display = 'block'; return;
+  }
+  if (np !== cp) {
+    errEl.textContent = '⚠️ Las contraseñas no coinciden.';
+    errEl.style.display = 'block'; return;
+  }
+
+  const btn = document.getElementById('newPassBtn');
+  btn.disabled = true; btn.textContent = '⏳ Guardando...';
+
+  const { data, error } = await db.auth.updateUser({ password: np });
+
+  btn.disabled = false; btn.textContent = '🔒 Guardar nueva contraseña';
+
+  if (error) {
+    errEl.textContent = '❌ Error: ' + error.message;
+    errEl.style.display = 'block';
+  } else {
+    okEl.style.display = 'block';
+    toast('✅ Contraseña actualizada correctamente', 'ok');
+    /* Limpiar el hash de la URL para que no se detecte de nuevo */
+    history.replaceState(null, '', window.location.pathname);
+    /* Esperar 2 segundos y redirigir al login */
+    setTimeout(() => {
+      document.getElementById('newPasswordPanel').style.display = 'none';
+      document.getElementById('newPassword').value  = '';
+      document.getElementById('confirmPassword').value = '';
+      volverAlLogin();
+      document.getElementById('authSubtitle').textContent = 'Municipalidad Distrital de Chinchao';
+      /* Cerrar sesión temporal para forzar nuevo login limpio */
+      db.auth.signOut();
+    }, 2000);
+  }
 }
 
 async function handleAuth() {
