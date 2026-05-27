@@ -169,7 +169,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
   <div class="auth-box">
     <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
     <h2 id="authTitle">Bienvenido</h2>
-    <p id="authSubtitle">Municipalidad Distrital de Chinchoa</p>
+    <p id="authSubtitle">Municipalidad Distrital de Chinchao</p>
     <div id="authForm">
       <div class="field"><label>Correo Electrónico</label><input type="email" id="email" placeholder="usuario@muni.gob.pe" /></div>
       <div class="field"><label>Contraseña</label><input type="password" id="password" placeholder="••••••••" /></div>
@@ -190,7 +190,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
       <div class="brand-icon">📋</div>
       <div>
         <h1>Registro de Folios</h1>
-        <p>Municipalidad Distrital de Chinchoa</p>
+        <p>Municipalidad Distrital de Chinchao</p>
       </div>
     </div>
     <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
@@ -434,6 +434,9 @@ function inicializarUsuario(user) {
 function showAuth() {
   document.getElementById('authOverlay').style.display = 'flex';
   document.getElementById('appContent').style.display = 'none';
+  /* Limpiar campos del formulario */
+  document.getElementById('email').value    = '';
+  document.getElementById('password').value = '';
   /* Limpiar estado para que no queden datos del usuario anterior */
   todos = []; currentUserId = null; currentUserEmail = null;
 }
