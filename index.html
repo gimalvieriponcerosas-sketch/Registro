@@ -790,15 +790,71 @@ function renderStats() {
 }
 
 function filtrar() {
-  const q = document.getElementById('busqueda').value.toLowerCase();
-  let f = filtroActivo === 'active' ? todos.filter(r => esReciente(r.created_at)) : [...todos];
-  if (q) f = f.filter(r =>
-    (r.anio && r.anio.toString().includes(q)) ||
-    (r.tipo_archivador && r.tipo_archivador.toLowerCase().includes(q)) ||
-    r.archivador.toLowerCase().includes(q) ||
-    r.nota_pago_rango.includes(q)
-  );
+  const q  = document.getElementById('busqueda').value.trim();
+  const qL = q.toLowerCase();
+
+  ocultarAvisoMinimo();
+
+  // Sin texto → mostrar todo según filtro activo
+  if (!q) {
+    renderTabla(filtroActivo === 'active' ? todos.filter(r => esReciente(r.created_at)) : [...todos]);
+    return;
+  }
+
+  // Base: respetar filtro activo (activos 7 días o todos)
+  // ⚠️ Si hay búsqueda activa, SIEMPRE buscar en TODOS los registros
+  // para no perder resultados por el filtro de fecha
+  let f = [...todos];
+
+  const esSoloNumero4 = /^\d{4}$/.test(q);   // exactamente 4 dígitos
+  const esSoloNumero  = /^\d+$/.test(q);      // cualquier cantidad de dígitos
+  const tieneGuion    = q.includes('-');        // formato nota: 1-544
+
+  if (esSoloNumero4) {
+    // 4 dígitos → buscar primero por año exacto
+    const porAnio = f.filter(r => r.anio && r.anio.toString() === q);
+    if (porAnio.length > 0) {
+      mostrarAvisoMinimo('Mostrando resultados del año ' + q + ' (todos los registros)');
+      renderTabla(porAnio);
+      return;
+    }
+    // Si no hay año, buscar en archivador y nota
+    f = f.filter(r =>
+      r.archivador.toLowerCase().includes(qL) ||
+      r.nota_pago_rango.includes(q)
+    );
+  } else if (tieneGuion) {
+    // Formato con guión → buscar en nota de pago (ej: "1-544")
+    f = f.filter(r => r.nota_pago_rango.includes(q));
+  } else if (esSoloNumero) {
+    // 1-3 dígitos → buscar archivador exacto o que empiece con ese número
+    const exacto = f.filter(r => r.archivador.trim().toLowerCase() === qL);
+    if (exacto.length > 0) {
+      renderTabla(exacto);
+      mostrarAvisoMinimo('Mostrando todos los registros que coinciden (sin filtro de fecha)');
+      return;
+    }
+    f = f.filter(r => r.archivador.trim().toLowerCase().startsWith(qL));
+  } else {
+    // Texto con letras → buscar en tipo de archivador y nombre de archivador
+    f = f.filter(r =>
+      (r.tipo_archivador && r.tipo_archivador.toLowerCase().includes(qL)) ||
+      r.archivador.toLowerCase().includes(qL)
+    );
+  }
+
+  if (f.length === 0) {
+    mostrarAvisoMinimo('Sin resultados para "' + q + '" — buscando en todos los registros');
+  } else {
+    mostrarAvisoMinimo('Mostrando ' + f.length + ' resultado(s) de todos los registros');
+  }
   renderTabla(f);
+}
+
+function mostrarAvisoMinimo(msg) { /* desactivado */ }
+function ocultarAvisoMinimo() {
+  const el = document.getElementById('busquedaAviso');
+  if (el) el.remove();
 }
 
 /* ════════════════════════════════════════════
