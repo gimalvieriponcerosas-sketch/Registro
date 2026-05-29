@@ -424,9 +424,17 @@ const db = createClient(
   'https://mqhdqszvmuuoskjlhyin.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xaGRxc3p2bXV1b3NramxoeWluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzI5NTcsImV4cCI6MjA5Mzc0ODk1N30.EqoKZfkgZDk98L3PjQ4CkB3DbCjJgROSPrh8EkqwS1g'
 );
-const GROQ_API_KEY = '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';
-const GROQ_MODEL   = 'llama-3.3-70b-versatile';
-const GROQ_URL     = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_KEYS = [
+  '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',
+  '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',
+  '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',
+  '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',
+  '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',
+  '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'
+];
+let groqKeyIndex = 0;
+const GROQ_MODEL = 'llama-3.3-70b-versatile';
+const GROQ_URL   = 'https://api.groq.com/openai/v1/chat/completions';
 
 /* ── Estado global ── */
 let chatHistory = [];
@@ -1250,8 +1258,37 @@ async function obtenerContextoDatos() {
 }
 
 async function llamarGroq(pregunta, contexto) {
-  const res = await fetch(GROQ_URL, { method:'POST', headers:{'Authorization':`Bearer ${GROQ_API_KEY}`,'Content-Type':'application/json'}, body:JSON.stringify({model:GROQ_MODEL,messages:[{role:'system',content:'Eres un asistente de folios municipales. Solo tienes acceso a los registros del usuario actual. Responde en español breve y claro.'},{role:'user',content:`${contexto}\n\nPregunta: ${pregunta}`}],max_tokens:512,temperature:0.4}) });
-  const d = await res.json(); return d.choices?.[0]?.message?.content || 'Sin respuesta.';
+  for (let i = 0; i < GROQ_KEYS.length; i++) {
+    const key = GROQ_KEYS[groqKeyIndex % GROQ_KEYS.length];
+    try {
+      const res = await fetch(GROQ_URL, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${key}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: GROQ_MODEL,
+          messages: [
+            { role: 'system', content: 'Eres un asistente de folios municipales. Solo tienes acceso a los registros del usuario actual. Responde en español breve y claro.' },
+            { role: 'user', content: `${contexto}\n\nPregunta: ${pregunta}` }
+          ],
+          max_tokens: 512,
+          temperature: 0.4
+        })
+      });
+      const d = await res.json();
+      if (d.error) {
+        console.warn(`Key ${groqKeyIndex} agotada, cambiando...`);
+        groqKeyIndex++;
+        continue;
+      }
+      return d.choices?.[0]?.message?.content || 'Sin respuesta.';
+    } catch(e) {
+      groqKeyIndex++;
+    }
+  }
+  return 'Todas las keys están agotadas por hoy. Intenta mañana.';
 }
 
 async function enviarMensaje() {
